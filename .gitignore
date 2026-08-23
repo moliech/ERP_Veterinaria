@@ -1,0 +1,7 @@
+/vetpets/vendor
+/vetpets/.env
+/vetpets/storage/*.key
+/vetpets/node_modules
+*.log
+.DS_Store
+Thumbs.db
