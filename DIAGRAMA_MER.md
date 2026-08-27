@@ -1,22 +1,22 @@
 # Diagrama Entidad-Relación (MER) - VetPets ERP
 
 ```mermaid
----
-config:
-  layout: dagre
----
 erDiagram
     ROLES ||--o{ USUARIOS : "asigna permisos a"
     PROPIETARIOS ||--o{ TELEFONOS_PROPIETARIO : "posee"
     PROPIETARIOS ||--o{ MASCOTAS_PACIENTES : "registra/dueño de"
-    PROPIETARIOS ||--o{ VENTAS_CABECERA : "realiza compras/pagos"
+    PROPIETARIOS ||--o{ VENTAS_CABECERA : "realiza compras"
     USUARIOS ||--o{ VENTAS_CABECERA : "procesa en caja"
+    USUARIOS ||--o{ COMPRAS_CABECERA : "registra recepcion"
     CATEGORIAS ||--o{ PRODUCTOS : "clasifica"
     PRODUCTOS ||--o{ LOTES_FARMACIA : "controla existencias"
-    PROVEEDORES ||--o{ LOTES_FARMACIA : "suministra"
+    PROVEEDORES ||--o{ COMPRAS_CABECERA : "suministra ordenes"
+    COMPRAS_CABECERA ||--o{ COMPRAS_DETALLE : "contiene"
+    PRODUCTOS ||--o{ COMPRAS_DETALLE : "se incluye en"
+    COMPRAS_DETALLE ||--o{ LOTES_FARMACIA : "genera lote"
     VENTAS_CABECERA ||--o{ VENTAS_DETALLE : "contiene"
     PRODUCTOS ||--o{ VENTAS_DETALLE : "se incluye en"
-    VENTAS_CABECERA ||--o{ PASARELA_PAGOS_LOGS : "genera registro"
+    VENTAS_CABECERA ||--|| PASARELA_PAGOS_LOGS : "genera registro"
 
     ROLES {
         bigint id PK
@@ -88,10 +88,31 @@ erDiagram
         string telefono
     }
 
+    COMPRAS_CABECERA {
+        bigint id PK
+        bigint proveedor_id FK
+        bigint usuario_id FK
+        string numero_factura_proveedor
+        datetime fecha_compra
+        decimal total_compra
+        string estado
+    }
+
+    COMPRAS_DETALLE {
+        bigint id PK
+        bigint compra_id FK
+        bigint producto_id FK
+        int cantidad_comprada
+        decimal precio_costo_unitario
+        decimal subtotal
+        string numero_lote
+        date fecha_vencimiento
+    }
+
     LOTES_FARMACIA {
         bigint id PK
         bigint producto_id FK
-        bigint proveedor_id FK
+        bigint compra_detalle_id FK
         string numero_lote
         date fecha_fabricacion
         date fecha_vencimiento
@@ -128,19 +149,21 @@ erDiagram
     }
 ```
 
-## 🔗 Resumen de Relaciones
-| Entidad Origen | Entidad Destino | Cardinalidad | Explicación |
+## 🔗 Resumen de Relaciones y Cardinalidades
+
+| Entidad Origen | Entidad Destino | Tipo de Relación | Explicación |
 | :--- | :--- | :---: | :--- |
-| `ROLES` | `USUARIOS` | $1:N$ | Un rol asigna permisos a múltiples usuarios. |
-| `PROPIETARIOS` | `TELEFONOS_PROPIETARIO` | $1:N$ | Un propietario registra múltiples números de contacto. |
-| `PROPIETARIOS` | `MASCOTAS_PACIENTES` | $1:N$ | Un propietario puede ser dueño de múltiples mascotas. |
-| `PROPIETARIOS` | `VENTAS_CABECERA` | $1:N$ | Un propietario realiza múltiples compras/facturas. |
-| `USUARIOS` | `VENTAS_CABECERA` | $1:N$ | Un cajero/usuario procesa múltiples facturas. |
-| `CATEGORIAS` | `PRODUCTOS` | $1:N$ | Una categoría agrupa múltiples productos. |
-| `PRODUCTOS` | `LOTES_FARMACIA` | $1:N$ | Un producto de farmacia gestiona múltiples lotes de vencimiento. |
-| `PROVEEDORES` | `LOTES_FARMACIA` | $1:N$ | Un proveedor suministra múltiples lotes de insumos. |
-| `VENTAS_CABECERA` | `VENTAS_DETALLE` | $1:N$ | Una factura contiene múltiples ítems de productos. |
-| `PRODUCTOS` | `VENTAS_DETALLE` | $1:N$ | Un producto se incluye en los detalles de múltiples ventas. |
-| **`VENTAS_CABECERA`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante la tabla pivote `VENTAS_DETALLE`. |
-| **`PROVEEDORES`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante la tabla pivote `LOTES_FARMACIA`. |
+| `ROLES` | `USUARIOS` | **$1:N$** | Un rol asigna permisos a múltiples usuarios. |
+| `PROPIETARIOS` | `TELEFONOS_PROPIETARIO` | **$1:N$** | Un propietario puede registrar $N$ números de contacto. |
+| `PROPIETARIOS` | `MASCOTAS_PACIENTES` | **$1:N$** | Un propietario puede ser dueño de $N$ mascotas. |
+| `PROPIETARIOS` | `VENTAS_CABECERA` | **$1:N$** | Un propietario realiza $N$ compras/facturas. |
+| `USUARIOS` | `VENTAS_CABECERA` | **$1:N$** | Un cajero/usuario atiende $N$ facturas de venta. |
+| `USUARIOS` | `COMPRAS_CABECERA` | **$1:N$** | Un usuario registra la recepción de $N$ órdenes de compra. |
+| `CATEGORIAS` | `PRODUCTOS` | **$1:N$** | Una categoría agrupa múltiples productos. |
+| `PROVEEDORES` | `COMPRAS_CABECERA` | **$1:N$** | Un proveedor suministra $N$ órdenes/facturas de compra. |
+| `COMPRAS_CABECERA` | `COMPRAS_DETALLE` | **$1:N$** | Una orden de compra contiene $N$ ítems de productos. |
+| `COMPRAS_DETALLE` | `LOTES_FARMACIA` | **$1:N$** | Un detalle de compra genera $N$ registros de lotes recibidos. |
+| `PRODUCTOS` | `LOTES_FARMACIA` | **$1:N$** | Un producto de farmacia maneja $N$ lotes de expiración. |
+| **`VENTAS_CABECERA`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante la tabla pivote `VENTAS_DETALLE` ($1:N$). |
+| **`PROVEEDORES`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante el historial de compra `COMPRAS_CABECERA` / `COMPRAS_DETALLE` ($1:N$). |
 | **`VENTAS_CABECERA`** | **`PASARELA_PAGOS_LOGS`** | **$1:1$** | **Uno a Uno:** Cada factura electrónica genera 1 log de pago en pasarela. |
