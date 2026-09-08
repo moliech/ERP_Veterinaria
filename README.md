@@ -2,6 +2,8 @@
 
 **VetPets ERP** es una plataforma web desarrollada en **Laravel**, diseñada para la administración integral de Clínicas Veterinarias y Tiendas de Mascotas (PetShop).
 
+**Integrantes:** Jhon Esteban Molina Ecahvarria - Heiber Lozano Mercado
+
 ---
 
 ## 📸 Vista Previa del Sistema
