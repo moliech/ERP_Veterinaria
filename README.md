@@ -1,38 +1,80 @@
 # VetPets ERP - Sistema de Gestión Empresarial Veterinario
 
-**VetPets ERP** es un Sistema de Planificación de Recursos Empresariales (ERP) desarrollado con **Laravel** y **MariaDB/MySQL**, diseñado para la gestión integral de Clínicas Veterinarias y Tiendas de Mascotas.
+**VetPets ERP** es una plataforma web desarrollada en **Laravel** con enfoque **RAD (Rapid Application Development)**, diseñada para la administración integral de Clínicas Veterinarias y Tiendas de Mascotas (PetShop).
 
 ---
 
-## 🏛️ Arquitectura y Módulos del Sistema
+## 📸 Vista Previa del Sistema
 
-El sistema está estructurado bajo los 9 módulos core de la asignatura:
+| Landing Page (Página de Inicio) | Login Personalizado |
+|---|---|
+| ![Landing Page](docs/visual/captura_1_landing.png) | ![Login](docs/visual/captura_2_login.png) |
 
-1. **Gestión de Usuarios y Permisos:** Control de acceso basado en roles (RBAC).
-2. **Gestión de Clientes y Proveedores:** Expedientes de propietarios, pacientes y registro de proveedores.
-3. **Catálogo de Productos y Servicios:** Gestión de medicamentos, productos minoristas y servicios médicos.
-4. **Control de Inventario:** Trazabilidad por lotes y fechas de vencimiento.
-5. **Ventas y Facturación (POS):** Punto de venta en mostrador y facturación de consultas.
-6. **Compras y Recepción:** Registro de órdenes de compra, historial de reabastecimiento e insumos.
-7. **Dashboard y KPIs:** Indicadores de rendimiento e ingresos.
-8. **Reportes y Automatizaciones:** Alertas de existencias y vencimiento de medicamentos.
-9. **Auditoría y Trazabilidad:** Logs de actividad del sistema.
+| Registro de Usuarios | Panel de Control (Dashboard con KPIs) |
+|---|---|
+| ![Registro](docs/visual/captura_3_registro.png) | ![Dashboard](docs/visual/captura_4_dashboard.png) |
 
+---
+
+## 🏛️ Estructura del Repositorio
+
+\\	ext
+ERP_Veterinaria/
+├── app/                       # Modelos, Controladores y Lógica de Negocio
+├── config/                    # Configuración de Laravel y Servicios
+├── database/                  # Migraciones y Seeders de la Base de Datos
+├── docs/                      # Documentación del Proyecto e Investigación
+│   ├── analisis.md            # Documento de Análisis del Negocio
+│   ├── diagrama_mer.md        # Modelo Entidad-Relación (MER)
+│   └── visual/                # Capturas de pantalla del Sistema
+│       ├── captura_1_landing.png
+│       ├── captura_2_login.png
+│       ├── captura_3_registro.png
+│       └── captura_4_dashboard.png
+├── public/                    # Archivos públicos y assets compilados
+├── resources/                 # Vistas Blade, estilos Tailwind y JavaScript
+├── routes/                    # Rutas web y autenticación (web.php, auth.php)
+├── storage/                   # Almacenamiento local y logs
+├── compose.yaml               # Configuración de Docker Sail
+├── composer.json              # Dependencias de PHP / Laravel
+├── package.json               # Dependencias de Node.js / Vite / Tailwind
+└── README.md                  # Documentación principal del repositorio
+\
 ---
 
 ## 📄 Documentación del Proyecto
 
-* **[DIAGRAMA_MER.md](DIAGRAMA_MER.md)**: Modelo Entidad-Relación interactivo en **Mermaid**, especificando llaves, relaciones ($1:1$, $1:N$, $N:M$) e historial de compras.
-* **[ANALISIS_EMPRESA.md](ANALISIS_EMPRESA.md)**: Documento de análisis de negocio, descripción de los 3 procesos clave del negocio y respuestas a preguntas de gestión.
+* 📋 **[Análisis del Negocio](docs/analisis.md)**: Descripción del giro del negocio, 3 procesos clave (Ventas, Compras, Inventario) y respuestas a preguntas de gestión.
+* 🗂️ **[Diagrama Entidad-Relación](docs/diagrama_mer.md)**: Especificación de entidades, llaves primarias/foráneas y relaciones ($, $, $).
+* 🖼️ **[Evidencias Visuales](docs/visual/)**: Capturas de pantalla de la interfaz personalizada (Clase 4).
 
 ---
 
-## 🚀 Despliegue Local (`vetpets`)
+## 🚀 Despliegue Local con Docker Sail
 
-```bash
-cd vetpets
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan serve
-```
+1. **Clonar el repositorio:**
+   \\ash
+   git clone https://github.com/moliech/ERP_Veterinaria.git
+   cd ERP_Veterinaria
+   \
+2. **Levantar los contenedores de Docker:**
+   \\ash
+   ./vendor/bin/sail up -d
+   \
+3. **Ejecutar migraciones de base de datos:**
+   \\ash
+   ./vendor/bin/sail artisan migrate
+   \
+4. **Acceso al sistema en el navegador:**
+   - Landing Page: **\http://localhost\** (o **\http://localhost:8060\**)
+   - Login: **\http://localhost/login\**
+   - Registro: **\http://localhost/register\**
+   - Dashboard: **\http://localhost/dashboard\**
+
+---
+
+## 🎨 Identidad Gráfica y Tecnologías
+
+- **Paleta de Colores:** Verde Esmeralda Corporativo (\#059669\), Slate Dark (\#0f172a\) y Grises Neutros (\#f8fafc\).
+- **Librerías:** Laravel Breeze, Tailwind CSS, Font Awesome 6.5 (Iconografía Veterinaria), Alpine.js.
+- **Entorno:** PHP 8.x, MySQL/MariaDB, Docker Sail, Node.js 22 LTS.
