@@ -68,8 +68,9 @@
                         <div>
                             <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Inventario & POS</span>
                             <div class="space-y-1">
-                                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition">
-                                    <i class="fa-solid fa-boxes-stacked w-6 text-center mr-2 text-emerald-400"></i>
+                                <a href="{{ route('products.index') }}" 
+                                   class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition {{ request()->routeIs('products.*') ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                    <i class="fa-solid fa-boxes-stacked w-6 text-center mr-2 {{ request()->routeIs('products.*') ? 'text-white' : 'text-emerald-400' }}"></i>
                                     Productos
                                 </a>
                                 <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition">
