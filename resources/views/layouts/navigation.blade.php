@@ -27,8 +27,8 @@
                         <i class="fa-solid fa-users mr-2 text-emerald-600"></i> Clientes
                     </x-nav-link>
 
-                    <x-nav-link href="#" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-boxes-stacked mr-2 text-emerald-600"></i> Productos
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')" class="text-slate-700 font-medium">
+                        <i class="fa-solid fa-boxes-stacked mr-2 text-emerald-600"></i> {{ __('Productos') }}
                     </x-nav-link>
 
                     <x-nav-link href="#" class="text-slate-700 font-medium">
