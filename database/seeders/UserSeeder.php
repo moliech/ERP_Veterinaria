@@ -25,5 +25,13 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'heiber@vetpets.com'],
+            [
+                'name' => 'Heiber Lozano Mercado',
+                'password' => Hash::make('password123'),
+            ]
+        );
     }
 }

@@ -34,6 +34,7 @@ El sistema cuenta con la arquitectura de base de datos traducida a **Migraciones
 | :--- | :--- | :--- |
 | **Administrador** | `admin@vetpets.com` | `password123` |
 | **Usuario Esteban** | `esteban@vetpets.com` | `password123` |
+| **Usuario Heiber (Lector)** | `heiber@vetpets.com` | `password123` |
 
 ---
 
@@ -87,7 +88,8 @@ ERP_Veterinaria/
 │   └── seeders/               # CategorySeeder, ProductSeeder, ProviderSeeder, OwnerSeeder, PetSeeder, UserSeeder
 ├── docs/                      # Documentación Técnica e Investigación
 │   ├── analisis.md            # Documento de Análisis del Negocio
-│   ├── diagrama_mer.md        # Modelo Entidad-Relación (MER)
+│   ├── diccionario.md         # Diccionario de Datos del Esquema
+│   ├── diagrama_mer.md        # Modelo Entidad-Relación (MER en Mermaid)
 │   └── visual/                # Capturas de pantalla de la Interfaz
 ├── public/                    # Archivos públicos y manifest compilado por Vite
 ├── resources/                 # Vistas Blade, estilos Tailwind CSS y JavaScript
@@ -103,13 +105,20 @@ ERP_Veterinaria/
 
 ## 📄 Documentación Técnica
 
-* 📋 **[Análisis del Negocio](docs/analisis.md)**: Descripción del modelo de negocio, procesos clave y preguntas de gestión.
-* 🗂️ **[Diagrama Entidad-Relación](docs/diagrama_mer.md)**: Especificación de entidades, llaves primarias/foráneas y relaciones ($1:1$, $1:N$, $N:M$).
+* 📋 **[Análisis de la Empresa](docs/analisis.md)**: Estructura general, procesos clave (Ventas, Compras, Inventarios) y listado de entidades.
+* 📖 **[Diccionario de Datos](docs/diccionario.md)**: Especificación técnica detallada de cada tabla, campos, tipos de dato y restricciones.
+* 🗂️ **[Diagrama Entidad-Relación](docs/diagrama_mer.md)**: Especificación visual y técnica del MER en sintaxis Mermaid.
 
 ---
 
 ## 🎨 Identidad Gráfica y Tecnologías
 
-- **Paleta de Colores:** Verde Esmeralda Corporativo (`#059669`), Slate Dark (`#0f172a`) y Grises Neutros (`#f8fafc`).
+### Paleta de Colores
+| Tono | Nombre | Código Hexadecimal | Muestra Visual |
+| :--- | :--- | :---: | :---: |
+| **Primario Corporativo** | Verde Esmeralda | `#059669` | 🟩 `![#059669](https://placehold.co/15x15/059669/059669.png)` |
+| **Fondo & Headers** | Slate Dark | `#0f172a` | ⬛ `![#0f172a](https://placehold.co/15x15/0f172a/0f172a.png)` |
+| **Superficie Neutra** | Grises Neutros | `#f8fafc` | ⬜ `![#f8fafc](https://placehold.co/15x15/f8fafc/f8fafc.png)` |
+
 - **Librerías:** Laravel Breeze, Tailwind CSS, Font Awesome 6.5 (Iconografía Veterinaria), Alpine.js.
 - **Entorno:** PHP 8.x, MySQL/MariaDB 8.4, Docker Sail, Node.js 22 LTS, Vite 6.
