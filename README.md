@@ -90,6 +90,7 @@ ERP_Veterinaria/
 │   ├── analisis.md            # Documento de Análisis del Negocio
 │   ├── diccionario.md         # Diccionario de Datos del Esquema
 │   ├── diagrama_mer.md        # Modelo Entidad-Relación (MER en Mermaid)
+│   ├── notas_proximo_corte.md # Apuntes y visión de arquitectura modular para próximos cortes
 │   └── visual/                # Capturas de pantalla de la Interfaz
 ├── public/                    # Archivos públicos y manifest compilado por Vite
 ├── resources/                 # Vistas Blade, estilos Tailwind CSS y JavaScript
@@ -108,6 +109,7 @@ ERP_Veterinaria/
 * 📋 **[Análisis de la Empresa](docs/analisis.md)**: Estructura general, procesos clave (Ventas, Compras, Inventarios) y listado de entidades.
 * 📖 **[Diccionario de Datos](docs/diccionario.md)**: Especificación técnica detallada de cada tabla, campos, tipos de dato y restricciones.
 * 🗂️ **[Diagrama Entidad-Relación](docs/diagrama_mer.md)**: Especificación visual y técnica del MER en sintaxis Mermaid.
+* 🧩 **[Evolución y Visión Modular (Próximos Cortes)](docs/notas_proximo_corte.md)**: Apuntes de arquitectura desacoplada, marca blanca, e-commerce y consultas médicas.
 
 ---
 
