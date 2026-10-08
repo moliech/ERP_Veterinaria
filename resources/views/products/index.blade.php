@@ -2,12 +2,16 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Gestión de Catálogo e Inventario de Productos') }}
+                {{ __('Gestión de Catálogo e Inventario de Productos') }} {{ isset($showTrashed) && $showTrashed ? '(Papelera)' : '' }}
             </h2>
-            <a href="{{ route('products.create') }}"
-               class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow">
-                + Registrar Nuevo Producto
-            </a>
+
+            {{-- 1. Botón protegido con permiso --}}
+            @can('crear-productos')
+                <a href="{{ route('products.create') }}"
+                   class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow">
+                    + Registrar Nuevo Producto
+                </a>
+            @endcan
         </div>
     </x-slot>
 
@@ -60,19 +64,37 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-center text-sm font-medium space-x-2">
-                                    <a href="{{ route('products.edit', $product) }}"
-                                       class="text-indigo-600 hover:text-indigo-900 font-bold">
-                                        Editar
-                                    </a>
-                                    <form action="{{ route('products.destroy', $product) }}"
-                                          method="POST" class="inline-block"
-                                          onsubmit="return confirm('¿Eliminar producto?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 font-bold">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                    {{-- 2. Soporte para Papelera (Restaurar) o Acciones normales --}}
+                                    @if ($product->trashed())
+                                        @can('eliminar-productos')
+                                            <form action="{{ route('products.restore', $product) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="text-green-600 hover:text-green-900 font-bold">
+                                                    Restaurar
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    @else
+                                        @can('editar-productos')
+                                            <a href="{{ route('products.edit', $product) }}"
+                                               class="text-indigo-600 hover:text-indigo-900 font-bold">
+                                                Editar
+                                            </a>
+                                        @endcan
+
+                                        @can('eliminar-productos')
+                                            <form action="{{ route('products.destroy', $product) }}"
+                                                  method="POST" class="inline-block"
+                                                  onsubmit="return confirm('¿Enviar producto a la papelera?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900 font-bold">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    @endif
                                 </td>
                             </tr>
                         @empty
