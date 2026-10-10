@@ -88,10 +88,13 @@
                             </a>
                             @endcan
                             <!-- Ventas -->
-                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition">
-                                <i class="fa-solid fa-cash-register w-6 text-center mr-2 text-emerald-400"></i>
+                            @can('ver-ventas')
+                            <a href="{{ route('sales.index') }}"
+                                class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition {{ request()->routeIs('sales.*') ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <i class="fa-solid fa-cash-register w-6 text-center mr-2 {{ request()->routeIs('sales.*') ? 'text-white' : 'text-emerald-400' }}"></i>
                                 Ventas
                             </a>
+                            @endcan
                         </div>
                     </div>
 
@@ -155,6 +158,8 @@
         </div>
 
     </div>
+
+    @stack('scripts')
 </body>
 
 </html>

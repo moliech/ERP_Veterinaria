@@ -15,4 +15,9 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class)->withTrashed();
     }
+
+    public function saleDetails()
+    {
+        return $this->hasMany(SaleDetail::class);
+    }
 }

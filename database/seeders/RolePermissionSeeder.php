@@ -23,6 +23,7 @@ class RolePermissionSeeder extends Seeder
             'ver-proveedores', 'crear-proveedores', 'editar-proveedores',
             'ver-clientes', 'crear-clientes', 'editar-clientes',
             'ver-pacientes', 'crear-pacientes', 'editar-pacientes',
+            'ver-ventas', 'crear-ventas', 'eliminar-ventas',
         ];
 
         foreach ($permissions as $permission) {
@@ -31,7 +32,8 @@ class RolePermissionSeeder extends Seeder
 
         Role::findOrCreate('admin')->syncPermissions(Permission::all());
         Role::findOrCreate('vendedor')->syncPermissions([
-            'ver-productos', 'ver-categorias', 'ver-clientes', 'crear-clientes', 'ver-pacientes'
+            'ver-productos', 'ver-categorias', 'ver-clientes', 'crear-clientes', 'ver-pacientes',
+            'ver-ventas', 'crear-ventas',
         ]);
         Role::findOrCreate('almacenista')->syncPermissions([
             'ver-productos', 'crear-productos', 'editar-productos', 'ver-categorias', 'crear-categorias'
