@@ -135,7 +135,7 @@
             </div>
         @endif
 
-        <!-- Accesos Rápidos a Módulos (Con directivas de Permisos @can) -->
+        {{-- Accesos Rápidos a Módulos (Permisos de Spatie) --}}
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <h3 class="text-xs uppercase font-bold tracking-wider text-slate-500 mb-4 px-1">Acciones y Accesos Rápidos</h3>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">

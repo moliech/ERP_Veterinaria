@@ -44,7 +44,7 @@
                             <option value="">-- Seleccione un Propietario --</option>
                             @foreach ($clients as $client)
                                 <option value="{{ $client->id }}" @selected(old('client_id') == $client->id)>
-                                    {{ $client->name }} {{ $client->first_surname }} — Doc: {{ $client->document_number }}
+                                    {{ $client->first_name }} {{ $client->last_name }} — Doc: {{ $client->document_number }}
                                 </option>
                             @endforeach
                         </select>

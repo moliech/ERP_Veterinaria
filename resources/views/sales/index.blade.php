@@ -107,7 +107,7 @@
                                         {{ $sale->sale_date->format('d/m/Y') }}
                                     </td>
                                     <td class="px-4 py-3 text-sm font-medium text-slate-900">
-                                        {{ $sale->client->name ?? 'Cliente Desconocido' }} {{ $sale->client->first_surname ?? '' }}
+                                        {{ $sale->client ? ($sale->client->first_name . ' ' . $sale->client->last_name) : 'Cliente Desconocido' }}
                                     </td>
                                     <td class="px-4 py-3 text-sm text-slate-600">
                                         {{ $sale->user->name ?? 'N/A' }}

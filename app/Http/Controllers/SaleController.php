@@ -31,13 +31,16 @@ class SaleController extends Controller implements HasMiddleware
      */
     public function index(Request $request)
     {
-        $sales = Sale::query()
+        $sales = Sale::withTrashed()
             ->with(['client', 'user'])
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = '%' . $request->string('search') . '%';
                 $q->where(function ($q) use ($search) {
                     $q->where('invoice_number', 'like', $search)
-                      ->orWhereHas('client', fn ($q) => $q->where('name', 'like', $search));
+                      ->orWhereHas('client', function ($q) use ($search) {
+                          $q->where('first_name', 'like', $search)
+                            ->orWhere('last_name', 'like', $search);
+                      });
                 });
             })
             ->when($request->filled('from'), fn ($q) => $q->whereDate('sale_date', '>=', $request->input('from')))
@@ -60,7 +63,7 @@ class SaleController extends Controller implements HasMiddleware
      */
     public function create()
     {
-        $clients = Owner::orderBy('name')->get(['id', 'name', 'first_surname', 'document_number']);
+        $clients = Owner::orderBy('first_name')->get(['id', 'first_name', 'last_name', 'document_number']);
         $products = Product::where('active', true)
             ->where('current_stock', '>', 0)
             ->orderBy('name')

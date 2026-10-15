@@ -34,7 +34,7 @@ class Sale extends Model
     // Relación con el Cliente / Propietario de Mascota
     public function client()
     {
-        return $this->belongsTo(Owner::class, 'client_id')->withTrashed();
+        return $this->belongsTo(Owner::class, 'client_id');
     }
 
     // Relación con el Vendedor / Usuario

@@ -76,7 +76,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                         <div>
                             <span class="text-slate-500 block">Nombre Completo:</span>
-                            <strong class="text-slate-800 text-sm">{{ $sale->client->name ?? 'Cliente Desconocido' }} {{ $sale->client->first_surname ?? '' }}</strong>
+                            <strong class="text-slate-800 text-sm">{{ $sale->client ? ($sale->client->first_name . ' ' . $sale->client->last_name) : 'Cliente Desconocido' }}</strong>
                         </div>
                         <div>
                             <span class="text-slate-500 block">Documento de Identidad:</span>
