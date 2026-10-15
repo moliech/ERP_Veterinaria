@@ -59,10 +59,12 @@
                                 <i class="fa-solid fa-dog w-6 text-center mr-2 text-emerald-400"></i>
                                 Pacientes
                             </a>
-                            <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition">
-                                <i class="fa-solid fa-users w-6 text-center mr-2 text-emerald-400"></i>
+                            @can('ver-clientes')
+                            <a href="{{ route('clients.index') }}" class="flex items-center px-3 py-2 text-sm font-medium rounded-xl transition {{ request()->routeIs('clients.*') ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <i class="fa-solid fa-users w-6 text-center mr-2 {{ request()->routeIs('clients.*') ? 'text-white' : 'text-emerald-400' }}"></i>
                                 Clientes
                             </a>
+                            @endcan
                         </div>
                     </div>
 
