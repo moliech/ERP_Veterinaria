@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+    Route::get('sales/{sale}/pdf', [SaleController::class, 'pdf'])
+    ->name('sales.pdf');
 });
 
 require __DIR__.'/auth.php';

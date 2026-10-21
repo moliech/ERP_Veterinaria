@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Sale;
 use App\Models\Owner;
 use App\Models\Product;
@@ -20,7 +21,7 @@ class SaleController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:ver-ventas', only: ['index', 'show']),
+             new Middleware('permission:ver-ventas', only: ['index', 'show', 'pdf']),
             new Middleware('permission:crear-ventas', only: ['create', 'store']),
             new Middleware('permission:eliminar-ventas', only: ['destroy']),
         ];
@@ -99,6 +100,17 @@ class SaleController extends Controller implements HasMiddleware
 
         return view('sales.show', compact('sale'));
     }
+
+
+    public function pdf(Sale $sale)
+    {
+    $sale->load(['client', 'user', 'details.product']);
+
+    $pdf = Pdf::loadView('pdf.sale', compact('sale'));
+
+    return $pdf->stream('Factura_' . $sale->invoice_number . '.pdf');
+    }
+
 
     /**
      * Anular una venta utilizando el SaleService (devuelve el stock).

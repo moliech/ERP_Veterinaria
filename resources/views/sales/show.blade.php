@@ -21,6 +21,11 @@
                 <a href="{{ route('sales.index') }}" class="text-slate-600 hover:text-slate-900 font-medium text-xs flex items-center space-x-1">
                     <i class="fa-solid fa-arrow-left"></i> <span>Volver a Ventas</span>
                 </a>
+                <a href="{{ route('sales.pdf', $sale) }}" target="_blank"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-xl text-xs transition flex items-center space-x-2 shadow-sm">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Descargar factura PDF</span>
+             </a>
             </div>
         </div>
     </x-slot>
