@@ -14,26 +14,46 @@
                 </div>
 
                 <!-- Enlaces de Módulos del ERP -->
-                <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex">
+                <div class="hidden space-x-4 sm:-my-px sm:ms-8 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-chart-line mr-2 text-emerald-600"></i> {{ __('Dashboard') }}
+                        <i class="fa-solid fa-chart-line mr-1.5 text-emerald-600"></i> {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link href="#" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-dog mr-2 text-emerald-600"></i> Pacientes
-                    </x-nav-link>
+                    @can('ver-productos')
+                        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-boxes-stacked mr-1.5 text-emerald-600"></i> {{ __('Productos') }}
+                        </x-nav-link>
+                    @endcan
 
-                    <x-nav-link href="#" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-users mr-2 text-emerald-600"></i> Clientes
-                    </x-nav-link>
+                    @can('ver-categorias')
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-tags mr-1.5 text-emerald-600"></i> {{ __('Categorías') }}
+                        </x-nav-link>
+                    @endcan
 
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-boxes-stacked mr-2 text-emerald-600"></i> {{ __('Productos') }}
-                    </x-nav-link>
+                    @can('ver-clientes')
+                        <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-users mr-1.5 text-emerald-600"></i> {{ __('Clientes') }}
+                        </x-nav-link>
+                    @endcan
 
-                    <x-nav-link href="#" class="text-slate-700 font-medium">
-                        <i class="fa-solid fa-cash-register mr-2 text-emerald-600"></i> Ventas
-                    </x-nav-link>
+                    @can('ver-ventas')
+                        <x-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-cash-register mr-1.5 text-emerald-600"></i> {{ __('Ventas') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('ver-proveedores')
+                        <x-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-building mr-1.5 text-emerald-600"></i> {{ __('Proveedores') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('ver-compras')
+                        <x-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-cart-flatbed mr-1.5 text-emerald-600"></i> {{ __('Compras') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -74,6 +94,72 @@
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none transition">
                     <i class="fa-solid" :class="{'fa-xmark': open, 'fa-bars': ! open}"></i>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Navigation Menu (Móvil) -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-gray-200 bg-white">
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                <i class="fa-solid fa-chart-line mr-2 text-emerald-600"></i> {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            @can('ver-productos')
+                <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                    <i class="fa-solid fa-boxes-stacked mr-2 text-emerald-600"></i> {{ __('Productos') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('ver-categorias')
+                <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                    <i class="fa-solid fa-tags mr-2 text-emerald-600"></i> {{ __('Categorías') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('ver-clientes')
+                <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
+                    <i class="fa-solid fa-users mr-2 text-emerald-600"></i> {{ __('Clientes') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('ver-ventas')
+                <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
+                    <i class="fa-solid fa-cash-register mr-2 text-emerald-600"></i> {{ __('Ventas') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('ver-proveedores')
+                <x-responsive-nav-link :href="route('providers.index')" :active="request()->routeIs('providers.*')">
+                    <i class="fa-solid fa-building mr-2 text-emerald-600"></i> {{ __('Proveedores') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('ver-compras')
+                <x-responsive-nav-link :href="route('purchases.index')" :active="request()->routeIs('purchases.*')">
+                    <i class="fa-solid fa-cart-flatbed mr-2 text-emerald-600"></i> {{ __('Compras') }}
+                </x-responsive-nav-link>
+            @endcan
+        </div>
+
+        <div class="pt-4 pb-1 border-t border-gray-200">
+            <div class="px-4">
+                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <x-responsive-nav-link :href="route('profile.edit')">
+                    {{ __('Perfil de usuario') }}
+                </x-responsive-nav-link>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <x-responsive-nav-link :href="route('logout')"
+                            onclick="event.preventDefault(); this.closest('form').submit();">
+                        {{ __('Cerrar sesión') }}
+                    </x-responsive-nav-link>
+                </form>
             </div>
         </div>
     </div>
