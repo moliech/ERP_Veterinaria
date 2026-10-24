@@ -54,6 +54,12 @@
                             <i class="fa-solid fa-cart-flatbed mr-1.5 text-emerald-600"></i> {{ __('Compras') }}
                         </x-nav-link>
                     @endcan
+
+                    @canany(['ver-usuarios', 'ver-roles', 'ver-permisos'])
+                        <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-gear mr-1.5 text-emerald-600"></i> {{ __('Configuración') }}
+                        </x-nav-link>
+                    @endcanany
                 </div>
             </div>
 
@@ -65,7 +71,12 @@
                             <div class="w-7 h-7 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mr-2 font-bold text-xs">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                             </div>
-                            <div>{{ Auth::user()->name }}</div>
+                            <div class="text-left">
+                                <div>{{ Auth::user()->name }}</div>
+                                @if ($activeRole = Auth::user()->activeRole())
+                                    <div class="mt-0.5 text-xs font-normal capitalize text-teal-700 dark:text-teal-300">{{ $activeRole->name }}</div>
+                                @endif
+                            </div>
                             <div class="ms-1">
                                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                             </div>
@@ -73,6 +84,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        @if (Auth::user()->hasMultipleRoles())
+                            <x-dropdown-link :href="route('active-role.edit')">
+                                <i class="fa-solid fa-repeat mr-2 text-gray-400"></i> Cambiar rol
+                            </x-dropdown-link>
+                        @endif
+
                         <x-dropdown-link :href="route('profile.edit')">
                             <i class="fa-solid fa-user mr-2 text-gray-400"></i> Perfil de usuario
                         </x-dropdown-link>
@@ -140,15 +157,30 @@
                     <i class="fa-solid fa-cart-flatbed mr-2 text-emerald-600"></i> {{ __('Compras') }}
                 </x-responsive-nav-link>
             @endcan
+
+            @canany(['ver-usuarios', 'ver-roles', 'ver-permisos'])
+                <x-responsive-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
+                    <i class="fa-solid fa-gear mr-2 text-emerald-600"></i> {{ __('Configuración') }}
+                </x-responsive-nav-link>
+            @endcanany
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                @if ($activeRole = Auth::user()->activeRole())
+                    <div class="text-xs font-normal capitalize text-teal-700 dark:text-teal-300">{{ $activeRole->name }}</div>
+                @endif
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
+                @if (Auth::user()->hasMultipleRoles())
+                    <x-responsive-nav-link :href="route('active-role.edit')">
+                        <i class="fa-solid fa-repeat mr-2 text-gray-400"></i> {{ __('Cambiar rol') }}
+                    </x-responsive-nav-link>
+                @endif
+
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Perfil de usuario') }}
                 </x-responsive-nav-link>

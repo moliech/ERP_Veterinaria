@@ -28,6 +28,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Cada inicio de sesión vuelve a preguntar el rol (si el usuario tiene varios)
+        $request->session()->forget('active_role');
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

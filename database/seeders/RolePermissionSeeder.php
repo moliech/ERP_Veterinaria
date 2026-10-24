@@ -3,55 +3,65 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
+    /**
+     * Crea (o actualiza) permisos y roles. Se puede ejecutar varias veces sin duplicar registros.
+     *
+     * IMPORTANTE: define el estado INICIAL de los roles. Si después se cambian permisos desde
+     * Configuración → Roles, volver a ejecutar este seeder los devuelve a lo que dice aquí.
+     */
     public function run(): void
     {
-        // Limpiar caché de permisos
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // 1. Catálogo de Permisos del ERP
         $permissions = [
-            // Productos & Categorías
-            'ver-productos', 'crear-productos', 'editar-productos', 'eliminar-productos', 'restaurar-productos',
-            'ver-categorias', 'crear-categorias', 'editar-categorias', 'eliminar-categorias', 'restaurar-categorias',
-            // Clientes / Propietarios
+            'ver-productos', 'crear-productos', 'editar-productos', 'eliminar-productos',
+            'ver-categorias', 'crear-categorias', 'editar-categorias', 'eliminar-categorias',
+
+            // Clientes
             'ver-clientes', 'crear-clientes', 'editar-clientes', 'eliminar-clientes',
-            // Ventas POS
-            'ver-ventas', 'crear-ventas', 'anular-ventas',
-            // NUEVOS CLASE 10: Proveedores & Compras
+
+            // Ventas
+            'ver-ventas', 'crear-ventas', 'editar-ventas', 'eliminar-ventas',
+
+            // Proveedores (Clase 10)
             'ver-proveedores', 'crear-proveedores', 'editar-proveedores', 'eliminar-proveedores',
-            'ver-compras', 'crear-compras', 'recibir-compras', 'anular-compras',
+
+            // Compras (Clase 10: se agrega recibir-compras)
+            'ver-compras', 'crear-compras', 'editar-compras', 'eliminar-compras', 'recibir-compras',
+
+            // Reportes
+            'ver-reportes',
+
+            // Configuración de seguridad (guía adicional de la Clase 10)
+            'ver-usuarios', 'crear-usuarios', 'editar-usuarios',
+            'ver-roles', 'crear-roles', 'editar-roles', 'eliminar-roles',
+            'ver-permisos', 'crear-permisos', 'eliminar-permisos',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::findOrCreate($permission);
         }
 
-        // 2. Definición de Roles y Asignación Equitativa
-        // Rol Administrador: Acceso total
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $admin->syncPermissions(Permission::all());
+        // El administrador siempre tiene TODOS los permisos
+        Role::findOrCreate('admin')->syncPermissions(Permission::all());
 
-        // Rol Almacenista: Encargado de bodega, inventario, catálogo y abastecimiento
-        $almacenista = Role::firstOrCreate(['name' => 'almacenista']);
-        $almacenista->syncPermissions([
-            'ver-productos', 'crear-productos', 'editar-productos',
-            'ver-categorias', 'crear-categorias', 'editar-categorias',
-            'ver-proveedores', 'crear-proveedores', 'editar-proveedores',
-            'ver-compras', 'crear-compras', 'recibir-compras', // Recibir compras en bodega
+        Role::findOrCreate('vendedor')->syncPermissions([
+            'ver-productos',
+            'ver-clientes', 'crear-clientes', 'editar-clientes',
+            'ver-ventas', 'crear-ventas',
         ]);
 
-        // Rol Vendedor: Ventas POS, consulta de catálogo y atención a clientes
-        $vendedor = Role::firstOrCreate(['name' => 'vendedor']);
-        $vendedor->syncPermissions([
-            'ver-productos', 'ver-categorias',
-            'ver-clientes', 'crear-clientes', 'editar-clientes',
-            'ver-ventas', 'crear-ventas', // Puede emitir facturas
+        Role::findOrCreate('almacenista')->syncPermissions([
+            'ver-productos', 'crear-productos', 'editar-productos',
+            'ver-categorias',
+            'ver-proveedores', 'crear-proveedores', 'editar-proveedores',
+            'ver-compras', 'crear-compras', 'recibir-compras',
         ]);
     }
 }
