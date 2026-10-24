@@ -28,16 +28,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rol activo (usuarios con varios roles)
-    if (class_exists(ActiveRoleController::class)) {
-        Route::get('rol-activo', [ActiveRoleController::class, 'edit'])->name('active-role.edit');
-        Route::put('rol-activo', [ActiveRoleController::class, 'update'])->name('active-role.update');
-    }
+    Route::get('rol-activo', [ActiveRoleController::class, 'edit'])->name('active-role.edit');
+    Route::put('rol-activo', [ActiveRoleController::class, 'update'])->name('active-role.update');
 
-    // Productos y categorías
+    // Productos
     Route::patch('products/{product}/restore', [ProductController::class, 'restore'])
         ->withTrashed()->name('products.restore');
     Route::resource('products', ProductController::class)->except('show');
 
+    // Categorías
     Route::patch('categories/{category}/restore', [CategoryController::class, 'restore'])
         ->withTrashed()->name('categories.restore');
     Route::resource('categories', CategoryController::class)->except('show');
@@ -65,33 +64,23 @@ Route::middleware('auth')->group(function () {
 
     // Configuración: usuarios, roles y permisos (guía adicional de la Clase 10)
     Route::prefix('configuracion')->name('settings.')->group(function () {
-        if (class_exists(SettingsController::class)) {
-            Route::get('/', SettingsController::class)->name('index');
-        } else {
-            Route::get('/', fn () => redirect()->route('dashboard'))->name('index');
-        }
+        Route::get('/', SettingsController::class)->name('index');
 
-        if (class_exists(UserController::class)) {
-            Route::patch('usuarios/{user}/estado', [UserController::class, 'toggle'])
-                ->name('users.toggle');
-            Route::resource('usuarios', UserController::class)
-                ->except(['show', 'destroy'])
-                ->parameters(['usuarios' => 'user'])
-                ->names('users');
-        }
+        Route::patch('usuarios/{user}/estado', [UserController::class, 'toggle'])
+            ->name('users.toggle');
+        Route::resource('usuarios', UserController::class)
+            ->except(['show', 'destroy'])
+            ->parameters(['usuarios' => 'user'])
+            ->names('users');
 
-        if (class_exists(RoleController::class)) {
-            Route::resource('roles', RoleController::class)->except('show');
-        }
+        Route::resource('roles', RoleController::class)->except('show');
 
-        if (class_exists(PermissionController::class)) {
-            Route::get('permisos', [PermissionController::class, 'index'])->name('permissions.index');
-            Route::put('permisos', [PermissionController::class, 'updateMatrix'])
-                ->name('permissions.matrix');
-            Route::post('permisos', [PermissionController::class, 'store'])->name('permissions.store');
-            Route::delete('permisos/{permission}', [PermissionController::class, 'destroy'])
-                ->name('permissions.destroy');
-        }
+        Route::get('permisos', [PermissionController::class, 'index'])->name('permissions.index');
+        Route::put('permisos', [PermissionController::class, 'updateMatrix'])
+            ->name('permissions.matrix');
+        Route::post('permisos', [PermissionController::class, 'store'])->name('permissions.store');
+        Route::delete('permisos/{permission}', [PermissionController::class, 'destroy'])
+            ->name('permissions.destroy');
     });
 });
 

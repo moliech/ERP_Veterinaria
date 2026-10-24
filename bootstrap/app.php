@@ -19,11 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Se ejecuta en TODAS las rutas web: usuario activo + rol activo elegido
-        if (class_exists(EnsureActiveRole::class)) {
-            $middleware->web(append: [
-                EnsureActiveRole::class,
-            ]);
-        }
+        $middleware->web(append: [
+            EnsureActiveRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
