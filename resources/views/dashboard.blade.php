@@ -23,7 +23,7 @@
             {{-- Accesos rápidos (cada botón aparece solo si el usuario tiene el permiso) --}} 
             <div class="flex flex-wrap gap-2"> 
                 @can('crear-productos') 
-                    <a href="{{ route('products.create') }}" class="rounded-md bg-teal-700 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-800">+ Nuevo producto</a> 
+                    <a href="{{ route('products.create') }}" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">+ Nuevo producto</a> 
                 @endcan 
                 @can('crear-categorias') 
                     <a href="{{ route('categories.create') }}" class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">+ Nueva categoría</a> 
@@ -40,7 +40,7 @@
             @if ($stats->isNotEmpty()) 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> 
                     @foreach ($stats as $stat) 
-                        <div class="bg-white shadow rounded p-4 border-l-4 border-blue-500"> 
+                        <div class="bg-white shadow rounded p-4 border-l-4 border-emerald-600"> 
                             <p class="text-sm text-gray-500">{{ $stat['label'] }}</p> 
                             <p class="text-xl font-bold text-gray-800 mt-1">{{ $stat['value'] }}</p> 
                         </div> 
@@ -104,7 +104,7 @@
                 @forelse ($modules as $module) 
                     <a href="{{ route($module['route']) }}" 
                        class="bg-white shadow rounded p-6 hover:shadow-lg transition"> 
-                        <h3 class="font-semibold text-lg text-blue-700">{{ $module['title'] }}</h3> 
+                        <h3 class="font-semibold text-lg text-emerald-700">{{ $module['title'] }}</h3> 
                         <p class="text-sm text-gray-600 mt-2">{{ $module['description'] }}</p> 
                     </a> 
                 @empty 

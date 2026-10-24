@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <title>@yield('title')</title>
-
+    @php
+        $corp = $company ?? \App\Models\CompanySetting::current();
+        $accentHex = $corp->primaryColorHex();
+    @endphp
 <style>
     @page {
         margin: 120px 40px 70px 40px;
@@ -23,7 +25,7 @@
         left: 0;
         right: 0;
         height: 85px;
-        border-bottom: 2px solid #059669;
+        border-bottom: 2px solid {{ $accentHex }};
     }
 
     footer {
@@ -42,22 +44,22 @@
     .brand {
         font-size: 18px;
         font-weight: bold;
-        color: #059669;
+        color: {{ $accentHex }};
     }
 
     .doc-box {
-        border: 2px solid #059669;
+        border: 2px solid {{ $accentHex }};
         border-radius: 6px;
         padding: 6px 12px;
         text-align: center;
-        background-color: #f0fdf4;
+        background-color: #f8fafc;
     }
 
     .doc-type {
         font-size: 10px;
         font-weight: bold;
         text-transform: uppercase;
-        color: #065f46;
+        color: {{ $accentHex }};
     }
 
     .doc-number {
@@ -102,8 +104,8 @@
     .total-row {
         font-size: 13px;
         font-weight: bold;
-        color: #059669;
-        border-top: 2px solid #059669;
+        color: {{ $accentHex }};
+        border-top: 2px solid {{ $accentHex }};
     }
 
     .badge {
@@ -114,7 +116,6 @@
         font-weight: bold;
     }
 </style>
-
 </head>
 
 <body>
@@ -123,37 +124,34 @@
             <tr>
                 <td style="width: 60%;">
                     <div class="brand">
-                        VetPets <span style="color: #0f172a;">ERP</span>
+                        {{ $corp->company_name }}
                     </div>
 
-                <div style="font-size: 10px; color: #475569;">
-                    Clínica Veterinaria y Tienda de Mascotas
-                </div>
+                    <div style="font-size: 10px; color: #475569;">
+                        {{ $corp->business_subtitle }}
+                    </div>
 
-                <div style="font-size: 9px; color: #64748b;">
-                    NIT: 900.567.890-1 · Tels: (602) 224-5000 / 315-000-0000
-                </div>
-            </td>
+                    <div style="font-size: 9px; color: #64748b;">
+                        NIT: {{ $corp->nit }} · {{ $corp->address }} · Tel: {{ $corp->phone }}
+                    </div>
+                </td>
 
-            <td style="width: 40%; text-align: right;">
-                <div class="doc-box">
-                    <div class="doc-type">@yield('doc_type')</div>
-                    <div class="doc-number">@yield('doc_number')</div>
-                </div>
-            </td>
-        </tr>
-    </table>
-</header>
+                <td style="width: 40%; text-align: right;">
+                    <div class="doc-box">
+                        <div class="doc-type">@yield('doc_type')</div>
+                        <div class="doc-number">@yield('doc_number')</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </header>
 
-<footer>
-    Documento oficial generado por VetPets ERP el
-    {{ now()->format('d/m/Y H:i') }}
-    — Software de Gestión Empresarial · COTECNOVA
-</footer>
+    <footer>
+        {{ $corp->invoice_footer ?: 'Documento oficial generado por ' . $corp->company_name }} · Emitido el {{ now()->format('d/m/Y H:i') }}
+    </footer>
 
-<main>
-    @yield('content')
-</main>
-
+    <main>
+        @yield('content')
+    </main>
 </body>
 </html>

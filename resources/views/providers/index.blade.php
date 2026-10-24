@@ -3,16 +3,16 @@
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Gestión de Proveedores y Laboratorios') }}
+                    {{ __('Gestión de Proveedores y Distribuidores') }}
                 </h2>
-                <p class="text-xs text-slate-500 mt-1">Catálogo de abastecimiento, medicamentos, alimentos e insumos veterinarios</p>
+                <p class="text-xs text-slate-500 mt-1">Catálogo de abastecimiento mayorista, alimentos, accesorios e insumos para PetShop</p>
             </div>
 
             @can('crear-proveedores')
                 <a href="{{ route('providers.create') }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-xs"></i>
-                    <span>+ Nuevo Proveedor</span>
+                    <span>Nuevo Proveedor</span>
                 </a>
             @endcan
         </div>
@@ -62,7 +62,7 @@
                         <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider">
                             <tr>
                                 <th class="px-4 py-3 text-left">NIT</th>
-                                <th class="px-4 py-3 text-left">Razón Social / Laboratorio</th>
+                                <th class="px-4 py-3 text-left">Razón Social / Distribuidor</th>
                                 <th class="px-4 py-3 text-left">Contacto</th>
                                 <th class="px-4 py-3 text-left">Teléfono & Correo</th>
                                 <th class="px-4 py-3 text-center">Órdenes</th>

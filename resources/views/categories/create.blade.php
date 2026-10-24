@@ -36,7 +36,7 @@
                             Nombre de la Categoría <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}"
-                               placeholder="Ej: Farmacia Veterinaria, Alimentos Concentrados, Insumos Quirúrgicos"
+                               placeholder="Ej: Alimentos para Perros, Accesorios y Juguetes, Higiene y Estética"
                                class="w-full border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" required>
                     </div>
 

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Registrar Nuevo Proveedor / Laboratorio') }}
+                {{ __('Registrar Nuevo Proveedor') }}
             </h2>
             <a href="{{ route('providers.index') }}"
                class="text-sm font-semibold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
@@ -26,14 +26,14 @@
                         </div>
 
                         <div>
-                            <x-input-label for="company_name" :value="__('Razón Social / Laboratorio *')" />
-                            <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name" :value="old('company_name')" required placeholder="Ej: Laboratorios Zoetis SAS" />
+                            <x-input-label for="company_name" :value="__('Razón Social / Distribuidor *')" />
+                            <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name" :value="old('company_name')" required placeholder="Ej: Distribuidora Nacional PetCare S.A.S." />
                             <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
                         </div>
 
                         <div>
                             <x-input-label for="contact_person" :value="__('Persona de Contacto / Asesor')" />
-                            <x-text-input id="contact_person" class="block mt-1 w-full" type="text" name="contact_person" :value="old('contact_person')" placeholder="Ej: Dra. Andrea Rincón" />
+                            <x-text-input id="contact_person" class="block mt-1 w-full" type="text" name="contact_person" :value="old('contact_person')" placeholder="Ej: Andrea Rincón (Ejecutiva Comercial)" />
                             <x-input-error :messages="$errors->get('contact_person')" class="mt-2" />
                         </div>
 

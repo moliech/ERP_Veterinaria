@@ -11,7 +11,7 @@
     .section-title {
         font-size: 11px;
         font-weight: bold;
-        color: #065f46;
+        color: #0f172a;
         border-bottom: 1px solid #d1d5db;
         padding-bottom: 4px;
         margin-top: 10px;
@@ -97,7 +97,7 @@
     @endif
 </table>
 
-<div class="section-title">DATOS DEL PROVEEDOR / LABORATORIO</div>
+<div class="section-title">DATOS DEL PROVEEDOR / DISTRIBUIDOR</div>
 
 <table class="info-table">
     <tr>
@@ -131,14 +131,14 @@
     </tr>
 </table>
 
-<div class="section-title">DETALLE DE MEDICAMENTOS E INSUMOS SOLICITADOS</div>
+<div class="section-title">DETALLE DE PRODUCTOS Y ARTÍCULOS SOLICITADOS</div>
 
 <table class="data">
     <thead>
         <tr>
             <th style="width: 8%;" class="text-center">Ped.</th>
             <th style="width: 8%;" class="text-center">Rec.</th>
-            <th style="width: 44%;">Producto / Medicamento</th>
+            <th style="width: 44%;">Producto / Artículo Comercial</th>
             <th style="width: 20%;" class="text-right">Costo Unitario</th>
             <th style="width: 20%;" class="text-right">Subtotal</th>
         </tr>
@@ -174,7 +174,7 @@
         </td>
     </tr>
     <tr>
-        <td>IVA (19%):</td>
+        <td>IVA ({{ number_format((float) ($company->tax_rate ?? 19), 0) }}%):</td>
         <td class="text-right">
             ${{ number_format((float) $purchase->tax, 2, ',', '.') }}
         </td>
@@ -193,8 +193,4 @@
         <p style="margin: 4px 0 0 0;">{{ $purchase->notes }}</p>
     </div>
 @endif
-
-<p style="margin-top: 25px; text-align: center; font-size: 9px; color: #64748b;">
-    Orden de compra generada automáticamente por VetPets ERP · Proceso de Abastecimiento Formal.
-</p>
 @endsection

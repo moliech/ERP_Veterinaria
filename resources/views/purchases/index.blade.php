@@ -12,7 +12,7 @@
                 <a href="{{ route('purchases.create') }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-xs"></i>
-                    <span>+ Nueva Orden de Compra</span>
+                    <span>Nueva Orden de Compra</span>
                 </a>
             @endcan
         </div>
@@ -53,7 +53,7 @@
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Control de Calidad</span>
                         <div class="text-2xl font-extrabold text-slate-700 mt-1">
-                            IVA 19%
+                            IVA {{ number_format((float) $company->tax_rate, 0) }}%
                         </div>
                         <span class="text-[11px] text-slate-500 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i>Trazabilidad tributaria</span>
                     </div>
@@ -113,7 +113,7 @@
                         <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider">
                             <tr>
                                 <th class="px-4 py-3 text-left">N° Orden</th>
-                                <th class="px-4 py-3 text-left">Proveedor / Laboratorio</th>
+                                <th class="px-4 py-3 text-left">Proveedor / Distribuidor</th>
                                 <th class="px-4 py-3 text-left">Fecha</th>
                                 <th class="px-4 py-3 text-center">Estado</th>
                                 <th class="px-4 py-3 text-right">Total (con IVA)</th>

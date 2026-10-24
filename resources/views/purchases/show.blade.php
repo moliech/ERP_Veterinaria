@@ -25,7 +25,7 @@
                 </a>
 
                 <a href="{{ route('purchases.pdf', $purchase) }}" target="_blank"
-                   class="bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 px-3.5 rounded-xl text-xs transition flex items-center space-x-1.5 shadow-sm">
+                   class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-3.5 rounded-xl text-xs transition flex items-center space-x-1.5 shadow-sm">
                     <i class="fa-solid fa-file-pdf"></i>
                     <span>Descargar Orden PDF</span>
                 </a>
@@ -65,12 +65,29 @@
                 </div>
             @endif
 
+            <!-- Encabezado Institucional de la Empresa Compradora -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center space-x-2 text-emerald-600 font-black text-xl tracking-wide mb-1">
+                        <i class="{{ $company->icon_class }}"></i>
+                        <span>{{ $company->company_name }}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 font-semibold uppercase tracking-wider">{{ $company->business_subtitle }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">NIT: {{ $company->nit }} · {{ $company->address }}</p>
+                </div>
+                <div class="md:text-right text-xs text-slate-600 space-y-1">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Orden de Compra Oficial</span>
+                    <span class="text-lg font-mono font-black text-slate-900 block">{{ $purchase->purchase_number }}</span>
+                    <div><strong>Teléfono:</strong> {{ $company->phone }}</div>
+                </div>
+            </div>
+
             <!-- Datos Generales -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Información Proveedor -->
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block border-b border-slate-100 pb-2">
-                        <i class="fa-solid fa-building mr-1"></i> Datos del Proveedor / Laboratorio
+                        <i class="fa-solid fa-building mr-1"></i> Datos del Proveedor / Distribuidor
                     </span>
                     <div class="text-base font-bold text-slate-900">
                         {{ $purchase->provider?->company_name ?? 'Proveedor no disponible' }}
@@ -132,7 +149,7 @@
                     <table class="min-w-full divide-y divide-slate-200 text-sm">
                         <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider">
                             <tr>
-                                <th class="px-4 py-3 text-left">Producto / Medicamento</th>
+                                <th class="px-4 py-3 text-left">Producto / Artículo Comercial</th>
                                 <th class="px-4 py-3 text-center">Cant. Pedida</th>
                                 <th class="px-4 py-3 text-center">Cant. Recibida</th>
                                 <th class="px-4 py-3 text-center">Pendiente</th>
@@ -181,7 +198,7 @@
                             <span class="font-mono font-semibold">${{ number_format((float) $purchase->subtotal, 2, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-slate-600">
-                            <span>IVA (19%):</span>
+                            <span>IVA ({{ number_format((float) $company->tax_rate, 0) }}%):</span>
                             <span class="font-mono font-semibold">${{ number_format((float) $purchase->tax, 2, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-slate-900 font-bold text-base border-t border-slate-300 pt-2">

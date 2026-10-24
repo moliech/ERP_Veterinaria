@@ -12,18 +12,18 @@ class ProviderSeeder extends Seeder
         $providers = [
             [
                 'nit' => '900123456-1',
-                'company_name' => 'Laboratorios Zoetis Colombia SAS',
-                'contact_person' => 'Dra. Andrea Rincón (Asesora Médica)',
+                'company_name' => 'Distribuidora Nacional PetCare S.A.S.',
+                'contact_person' => 'Andrea Rincón (Ejecutiva Comercial)',
                 'phone' => '3157894512',
-                'email' => 'ventas@zoetis.com.co',
+                'email' => 'ventas@petcarecolombia.com.co',
                 'address' => 'Zona Industrial Calle 26 # 68-35, Bogotá',
             ],
             [
                 'nit' => '860987654-3',
-                'company_name' => 'Distribuidora Veterinaria del Valle (VetValle)',
+                'company_name' => 'Comercializadora Mascotas del Valle (PetValle)',
                 'contact_person' => 'Carlos Alberto Medina',
                 'phone' => '3124567890',
-                'email' => 'pedidos@vetvalle.com',
+                'email' => 'pedidos@petvalle.com',
                 'address' => 'Av. Roosevelt # 34-12, Cali',
             ],
             [
@@ -31,15 +31,15 @@ class ProviderSeeder extends Seeder
                 'company_name' => 'Nestlé Purina Pet Care Colombia',
                 'contact_person' => 'Marcela Pineda (Canal Especializado)',
                 'phone' => '3209876543',
-                'email' => 'atencion.veterinaria@purina.com',
+                'email' => 'canal.petshop@purina.com',
                 'address' => 'Parque Empresarial Celta Bodega 45, Funza',
             ],
             [
                 'nit' => '901234567-8',
-                'company_name' => 'Insumos Médicos Quirúrgicos VetQuímica',
-                'contact_person' => 'Ing. Roberto Silva',
+                'company_name' => 'Importadora de Accesorios K9 & Felinos S.A.S.',
+                'contact_person' => 'Roberto Silva',
                 'phone' => '3187654321',
-                'email' => 'contacto@vetquimica.com.co',
+                'email' => 'contacto@k9accesorios.com.co',
                 'address' => 'Cra 50 # 100-20, Medellín',
             ],
             [
@@ -52,31 +52,31 @@ class ProviderSeeder extends Seeder
             ],
             [
                 'nit' => '900456789-2',
-                'company_name' => 'Virbac Colombia S.A.S.',
-                'contact_person' => 'Dra. Claudia Ortiz',
+                'company_name' => 'Royal Canin Colombia S.A.S.',
+                'contact_person' => 'Claudia Ortiz',
                 'phone' => '3178901234',
-                'email' => 'servicio.cliente@virbac.com.co',
+                'email' => 'servicio.cliente@royalcanin.com.co',
                 'address' => 'Cra 7 # 156-68 Torre Norte Of. 804, Bogotá',
             ],
             [
                 'nit' => '860002150-5',
-                'company_name' => 'Boehringer Ingelheim Animal Health',
-                'contact_person' => 'Dr. Fernando Castro',
+                'company_name' => 'italcol Mascotas S.A. (Línea Chunky & Mirringo)',
+                'contact_person' => 'Fernando Castro',
                 'phone' => '3112345678',
-                'email' => 'salud.animal@boehringer.com',
-                'address' => 'Cra 11 # 84-09 Piso 5, Bogotá',
+                'email' => 'pedidos.mascotas@italcol.com',
+                'address' => 'Km 13 Vía Girón, Bucaramanga',
             ],
             [
                 'nit' => '901345678-0',
-                'company_name' => 'Elanco Salud Animal Colombia',
-                'contact_person' => 'Paola Gómez (Representante de Zona)',
+                'company_name' => 'Elanco Pet Health Colombia',
+                'contact_person' => 'Paola Gómez (Representante Regional)',
                 'phone' => '3145678901',
                 'email' => 'contacto.co@elancoah.com',
                 'address' => 'Calle 100 # 19-61 Piso 8, Bogotá',
             ],
             [
                 'nit' => '860069284-7',
-                'company_name' => 'Agrocampo S.A.S. - División Mayorista',
+                'company_name' => 'Agrocampo S.A.S. - División Mayorista PetShop',
                 'contact_person' => 'Jorge Hernán Duarte',
                 'phone' => '3167890123',
                 'email' => 'mayoristas@agrocampo.com.co',
@@ -84,15 +84,15 @@ class ProviderSeeder extends Seeder
             ],
             [
                 'nit' => '900223344-6',
-                'company_name' => 'Laboratorios Holliday-Scott Colombia',
-                'contact_person' => 'Dra. Natalia Morales',
+                'company_name' => 'BioArenas y Sanitarios Felinos de Colombia',
+                'contact_person' => 'Natalia Morales',
                 'phone' => '3138901234',
-                'email' => 'colombia@holliday-scott.com',
+                'email' => 'ventas@bioarenas.com.co',
                 'address' => 'Cra 43A # 1-50 San Fernando Plaza, Medellín',
             ],
             [
                 'nit' => '800149696-2',
-                'company_name' => 'Alimentos Polar Colombia (Dogourmet)',
+                'company_name' => 'Alimentos Polar Colombia (Línea Dogourmet)',
                 'contact_person' => 'Andrés Mauricio Mejía',
                 'phone' => '3129012345',
                 'email' => 'mascotas@empresas-polar.com',
@@ -100,16 +100,19 @@ class ProviderSeeder extends Seeder
             ],
             [
                 'nit' => '890302820-1',
-                'company_name' => 'Carval de Colombia S.A.S.',
-                'contact_person' => 'Dr. Gustavo Adolfo Valencia',
+                'company_name' => 'Distribuidora SurtiMascotas de Occidente S.A.S.',
+                'contact_person' => 'Gustavo Adolfo Valencia',
                 'phone' => '3156789012',
-                'email' => 'ventas@carval.com.co',
+                'email' => 'ventas@surtimascotas.com.co',
                 'address' => 'Calle 29 Norte # 6A-40, Cali',
             ],
         ];
 
         foreach ($providers as $prov) {
-            Provider::firstOrCreate(['nit' => $prov['nit']], $prov);
+            Provider::withTrashed()->updateOrCreate(
+                ['nit' => $prov['nit']],
+                array_merge($prov, ['deleted_at' => null])
+            );
         }
     }
 }

@@ -28,7 +28,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <x-input-label for="provider_id" :value="__('Proveedor / Laboratorio *')" />
+                            <x-input-label for="provider_id" :value="__('Proveedor / Distribuidor *')" />
                             <select id="provider_id" name="provider_id" required
                                     class="mt-1 block w-full border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
                                 <option value="">-- Seleccione un Proveedor --</option>
@@ -61,10 +61,10 @@
                 <div class="bg-white p-6 shadow-sm rounded-2xl border border-slate-200 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                         <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
-                            2. Medicamentos, Alimentos e Insumos a Solicitar
+                            2. Productos y Artículos Comerciales a Solicitar
                         </h3>
                         <button type="button" id="addRowBtn"
-                                class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1 transition">
+                                class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1 transition">
                             <i class="fa-solid fa-plus"></i> <span>Agregar Producto</span>
                         </button>
                     </div>
@@ -96,7 +96,7 @@
                                 <span class="font-mono font-semibold" id="lblSubtotal">$0,00</span>
                             </div>
                             <div class="flex justify-between text-slate-600">
-                                <span>IVA (19%):</span>
+                                <span>IVA ({{ number_format((float) $company->tax_rate, 0) }}%):</span>
                                 <span class="font-mono font-semibold" id="lblTax">$0,00</span>
                             </div>
                             <div class="flex justify-between text-slate-900 font-bold text-base border-t border-slate-300 pt-2">
@@ -208,7 +208,7 @@
                 if (lineCell) lineCell.innerText = formatCurrency(line);
             });
 
-            const tax = Math.round(subtotal * 0.19 * 100) / 100;
+            const tax = Math.round(subtotal * ({{ ((float) $company->tax_rate) / 100 }}) * 100) / 100;
             const total = subtotal + tax;
 
             document.getElementById('lblSubtotal').innerText = formatCurrency(subtotal);

@@ -27,7 +27,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="company_name" :value="__('Razón Social / Laboratorio *')" />
+                            <x-input-label for="company_name" :value="__('Razón Social / Distribuidor *')" />
                             <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name" :value="old('company_name', $provider->company_name)" required />
                             <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
                         </div>

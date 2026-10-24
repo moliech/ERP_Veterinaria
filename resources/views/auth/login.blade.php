@@ -5,7 +5,7 @@
     <!-- Encabezado del Formulario -->
     <div class="mb-6 text-center">
         <h2 class="text-xl font-bold text-gray-900">Iniciar sesión</h2>
-        <p class="text-xs text-gray-500 mt-1">Ingresa tus credenciales para acceder al sistema de gestión veterinaria</p>
+        <p class="text-xs text-gray-500 mt-1">Ingresa tus credenciales para acceder al sistema empresarial {{ $company->company_name }}</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}">

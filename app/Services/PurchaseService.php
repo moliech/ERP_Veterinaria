@@ -33,12 +33,15 @@ class PurchaseService
                 ];
             }
 
-            $tax = round($subtotal * 0.19, 2); // IVA 19%
+            $company = \App\Models\CompanySetting::current();
+            $taxRate = ((float) ($company->tax_rate ?? 19)) / 100;
+            $tax = round($subtotal * $taxRate, 2); // IVA parametrizable (19% por defecto)
             $total = $subtotal + $tax;
 
-            // Generar número consecutivo OC-00001
+            // Generar número consecutivo parametrizable (OC-00001 por defecto)
             $nextId = (Purchase::withTrashed()->max('id') ?? 0) + 1;
-            $purchaseNumber = 'OC-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            $prefix = trim((string) ($company->purchase_prefix ?? 'OC'), '-');
+            $purchaseNumber = $prefix . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
             $purchase = Purchase::create([
                 'purchase_number' => $purchaseNumber,
@@ -95,8 +98,11 @@ class PurchaseService
                     // Aumentar cantidad recibida acumulada en la línea
                     $detail->increment('received_quantity', $qtyToReceive);
 
-                    // Aumentar stock físico en la bodega
+                    // Aumentar stock físico en la bodega y sincronizar último costo de adquisición
                     $detail->product->increment('current_stock', $qtyToReceive);
+                    if ((float) $detail->unit_cost > 0) {
+                        $detail->product->update(['cost_price' => $detail->unit_cost]);
+                    }
 
                     $totalUnitsReceivedThisBatch += $qtyToReceive;
                 }
