@@ -229,6 +229,7 @@
 
                         <form method="POST" action="{{ route('purchases.receive', $purchase) }}" class="space-y-4">
                             @csrf
+                            @method('PATCH')
 
                             <div class="overflow-x-auto rounded-xl bg-white border border-blue-200">
                                 <table class="min-w-full divide-y divide-blue-100 text-sm">

@@ -105,8 +105,12 @@ class DashboardController extends Controller
             $balance = (float) ($salesTotal - $purchasesTotal);
 
             $stats->push([
+                'key' => 'balance',
                 'label' => 'Ventas − Compras del mes',
-                'value' => ($balance >= 0 ? '+' : '-') . '$' . number_format(abs($balance), 2, ',', '.'),
+                'value' => ($balance >= 0 ? '+' : '-') . '$' . number_format(abs($balance), 0, ',', '.'),
+                'subtext' => $balance >= 0 ? 'Flujo de caja superavitario' : 'Inversión neta en mercancía',
+                'icon' => 'fa-solid fa-scale-balanced',
+                'color' => $balance >= 0 ? 'emerald' : 'indigo',
             ]);
         }
 
@@ -117,8 +121,12 @@ class DashboardController extends Controller
                 ->sum('total');
 
             $stats->push([
+                'key' => 'sales',
                 'label' => 'Ventas del mes',
-                'value' => '$' . number_format((float) $totalSales, 2, ',', '.'),
+                'value' => '$' . number_format((float) $totalSales, 0, ',', '.'),
+                'subtext' => 'Facturación POS acumulada',
+                'icon' => 'fa-solid fa-cash-register',
+                'color' => 'emerald',
             ]);
         }
 
@@ -129,15 +137,23 @@ class DashboardController extends Controller
                 ->sum('total');
 
             $stats->push([
+                'key' => 'purchases',
                 'label' => 'Compras del mes',
-                'value' => '$' . number_format((float) $totalPurchases, 2, ',', '.'),
+                'value' => '$' . number_format((float) $totalPurchases, 0, ',', '.'),
+                'subtext' => 'Abastecimiento a proveedores',
+                'icon' => 'fa-solid fa-cart-shopping',
+                'color' => 'amber',
             ]);
         }
 
         if ($user->can('ver-productos') && SystemModule::isEnabled('products')) {
             $stats->push([
+                'key' => 'products',
                 'label' => 'Total productos activos',
                 'value' => Product::where('active', true)->count(),
+                'subtext' => 'Catálogo comercial disponible',
+                'icon' => 'fa-solid fa-boxes-stacked',
+                'color' => 'sky',
             ]);
         }
 
@@ -151,7 +167,7 @@ class DashboardController extends Controller
                       ->whereYear('sale_date', now()->year)
                       ->where('status', '!=', 'anulada');
                 })
-                ->with('product:id,name,sale_price')
+                ->with('product:id,name,sale_price,barcode')
                 ->groupBy('product_id')
                 ->orderByDesc('total_sold')
                 ->limit(5)
@@ -166,9 +182,27 @@ class DashboardController extends Controller
                     $q->where('current_stock', '<=', 5)
                       ->orWhereColumn('current_stock', '<=', 'minimum_stock');
                 })
+                ->with('category:id,name')
                 ->orderBy('current_stock')
-                ->limit(8)
+                ->limit(6)
                 ->get();
+        }
+
+        // 5. Alertas de Lotes Próximos a Vencer (<= 60 días) o Vencidos
+        $expiringLots = collect();
+        if ($user->can('ver-productos') && SystemModule::isEnabled('products')) {
+            $expiringLots = Product::where('active', true)
+                ->whereNotNull('expiration_date')
+                ->whereDate('expiration_date', '<=', now()->addDays(60))
+                ->orderBy('expiration_date')
+                ->limit(4)
+                ->get();
+        }
+
+        // 6. Resumen Rápido de Órdenes de Compra
+        $pendingPurchasesCount = 0;
+        if ($user->can('ver-compras') && SystemModule::isEnabled('purchases')) {
+            $pendingPurchasesCount = Purchase::whereIn('status', ['pendiente', 'parcial'])->count();
         }
 
         return view('dashboard', [
@@ -177,6 +211,8 @@ class DashboardController extends Controller
             'stats' => $stats,
             'topProducts' => $topProducts,
             'lowStock' => $lowStock,
+            'expiringLots' => $expiringLots,
+            'pendingPurchasesCount' => $pendingPurchasesCount,
             'modules' => $modules,
         ]);
     }

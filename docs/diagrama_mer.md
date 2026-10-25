@@ -1,169 +1,157 @@
-# Diagrama Entidad-Relación (MER) - VetPets ERP
+# Diagrama Entidad-Relación (MER) — VetPets ERP (Segundo Corte)
 
 ```mermaid
 erDiagram
-    ROLES ||--o{ USUARIOS : "asigna permisos a"
-    PROPIETARIOS ||--o{ TELEFONOS_PROPIETARIO : "posee"
-    PROPIETARIOS ||--o{ MASCOTAS_PACIENTES : "registra/dueño de"
-    PROPIETARIOS ||--o{ VENTAS_CABECERA : "realiza compras"
-    USUARIOS ||--o{ VENTAS_CABECERA : "procesa en caja"
-    USUARIOS ||--o{ COMPRAS_CABECERA : "registra recepcion"
-    CATEGORIAS ||--o{ PRODUCTOS : "clasifica"
-    PRODUCTOS ||--o{ LOTES_FARMACIA : "controla existencias"
-    PROVEEDORES ||--o{ COMPRAS_CABECERA : "suministra ordenes"
-    COMPRAS_CABECERA ||--o{ COMPRAS_DETALLE : "contiene"
-    PRODUCTOS ||--o{ COMPRAS_DETALLE : "se incluye en"
-    COMPRAS_DETALLE ||--o{ LOTES_FARMACIA : "genera lote"
-    VENTAS_CABECERA ||--o{ VENTAS_DETALLE : "contiene"
-    PRODUCTOS ||--o{ VENTAS_DETALLE : "se incluye en"
-    VENTAS_CABECERA ||--|| PASARELA_PAGOS_LOGS : "genera registro"
+    USERS ||--o{ SALES : "registra (user_id)"
+    USERS ||--o{ PURCHASES : "solicita (user_id)"
+    ROLES }o--o{ USERS : "model_has_roles"
+    PERMISSIONS }o--o{ ROLES : "role_has_permissions"
+    PERMISSIONS }o--o{ USERS : "model_has_permissions (directos)"
 
-    ROLES {
-        bigint id PK
-        string nombre_rol
-        string descripcion
-    }
+    CATEGORIES ||--o{ PRODUCTS : "clasifica (category_id)"
+    OWNERS ||--o{ OWNER_PHONES : "posee (owner_id)"
+    OWNERS ||--o{ SALES : "compra (client_id)"
 
-    USUARIOS {
+    PROVIDERS ||--o{ PURCHASES : "abastece (provider_id)"
+    PURCHASES ||--|{ PURCHASE_DETAILS : "contiene (purchase_id)"
+    PRODUCTS ||--o{ PURCHASE_DETAILS : "abastece (product_id)"
+
+    SALES ||--|{ SALE_DETAILS : "detalla (sale_id)"
+    PRODUCTS ||--o{ SALE_DETAILS : "vende (product_id)"
+
+    USERS {
         bigint id PK
-        bigint rol_id FK
-        string primer_nombre
-        string segundo_nombre
-        string primer_apellido
-        string segundo_apellido
-        string email
+        string name
+        string email UK
         string password
+        boolean active "Usuario activo/inactivo"
+        timestamp created_at
     }
 
-    PROPIETARIOS {
+    CATEGORIES {
         bigint id PK
-        string tipo_documento
-        string numero_documento
-        string primer_nombre
-        string segundo_nombre
-        string primer_apellido
-        string segundo_apellido
-        string direccion
+        string name
+        text description
+        boolean active
+        timestamp deleted_at "SoftDeletes"
+    }
+
+    PRODUCTS {
+        bigint id PK
+        bigint category_id FK
+        string barcode UK
+        string name
+        decimal cost_price "10,2 (Costo de compra)"
+        decimal sale_price "10,2 (Precio base de venta)"
+        decimal tax_rate "5,2 (IVA: 0, 5 o 19 %)"
+        string batch_code "Código de lote"
+        date expiration_date "Fecha de vencimiento"
+        int current_stock
+        int minimum_stock
+        boolean active
+        timestamp deleted_at "SoftDeletes"
+    }
+
+    OWNERS {
+        bigint id PK
+        string document_type
+        string document_number UK
+        string first_name
+        string last_name
+        string address
         string email
     }
 
-    TELEFONOS_PROPIETARIO {
+    OWNER_PHONES {
         bigint id PK
-        bigint propietario_id FK
-        string numero_telefono
-        string tipo_telefono
+        bigint owner_id FK
+        string phone_number
     }
 
-    MASCOTAS_PACIENTES {
+    PROVIDERS {
         bigint id PK
-        bigint propietario_id FK
-        string nombre_mascota
-        string especie
-        string raza
-        date fecha_nacimiento
-        decimal peso
+        string nit UK
+        string company_name
+        string contact_person
+        string phone
+        string email
+        string address
+        boolean active
+        timestamp deleted_at "SoftDeletes"
     }
 
-    CATEGORIAS {
+    PURCHASES {
         bigint id PK
-        string nombre_categoria
-        string descripcion
+        string purchase_number UK "OC-00001"
+        bigint provider_id FK
+        bigint user_id FK
+        date purchase_date
+        decimal subtotal "12,2"
+        decimal tax "12,2 (IVA orden de compra)"
+        decimal total "12,2"
+        string status "pendiente | parcial | recibida | cancelada"
+        text notes
+        timestamp deleted_at "SoftDeletes"
     }
 
-    PRODUCTOS {
+    PURCHASE_DETAILS {
         bigint id PK
-        bigint categoria_id FK
-        string codigo_barras
-        string nombre_producto
-        decimal precio_venta
-        int stock_actual
-        int stock_minimo
+        bigint purchase_id FK
+        bigint product_id FK
+        int quantity "Unidades pedidas"
+        int received_quantity "Unidades recibidas acumuladas"
+        decimal unit_cost "12,2"
+        decimal subtotal "12,2"
     }
 
-    PROVEEDORES {
+    SALES {
         bigint id PK
+        string invoice_number UK "FV-00001"
+        bigint client_id FK "Ref: owners.id"
+        bigint user_id FK
+        date sale_date
+        decimal subtotal "12,2"
+        decimal tax "12,2 (Suma IVA diferencial)"
+        decimal total "12,2"
+        string status "pagada | anulada"
+        text notes
+        timestamp deleted_at "SoftDeletes"
+    }
+
+    SALE_DETAILS {
+        bigint id PK
+        bigint sale_id FK
+        bigint product_id FK
+        int quantity
+        decimal unit_price "12,2"
+        decimal subtotal "12,2"
+    }
+
+    COMPANY_SETTINGS {
+        bigint id PK
+        string company_name
+        string business_subtitle
         string nit
-        string razon_social
-        string persona_contacto
-        string telefono
+        string address
+        string phone
+        string email
+        string primary_color
+        string icon_class
+        decimal tax_rate "5,2 (IVA base por defecto)"
+        string currency
+        string invoice_prefix
+        string purchase_prefix
+        string invoice_footer
     }
 
-    COMPRAS_CABECERA {
+    SYSTEM_MODULES {
         bigint id PK
-        bigint proveedor_id FK
-        bigint usuario_id FK
-        string numero_factura_proveedor
-        datetime fecha_compra
-        decimal total_compra
-        string estado
-    }
-
-    COMPRAS_DETALLE {
-        bigint id PK
-        bigint compra_id FK
-        bigint producto_id FK
-        int cantidad_comprada
-        decimal precio_costo_unitario
-        decimal subtotal
-        string numero_lote
-        date fecha_vencimiento
-    }
-
-    LOTES_FARMACIA {
-        bigint id PK
-        bigint producto_id FK
-        bigint compra_detalle_id FK
-        string numero_lote
-        date fecha_fabricacion
-        date fecha_vencimiento
-        int cantidad_recibida
-        int cantidad_disponible
-    }
-
-    VENTAS_CABECERA {
-        bigint id PK
-        bigint propietario_id FK
-        bigint usuario_id FK
-        datetime fecha_venta
-        decimal total_venta
-        string metodo_pago
-    }
-
-    VENTAS_DETALLE {
-        bigint id PK
-        bigint venta_id FK
-        bigint producto_id FK
-        int cantidad
-        decimal precio_unitario
-        decimal subtotal
-    }
-
-    PASARELA_PAGOS_LOGS {
-        bigint id PK
-        bigint venta_id FK
-        string referencia_transaccion
-        string pasarela_proveedor
-        string estado_transaccion
-        decimal monto_procesado
-        datetime fecha_procesamiento
+        string key UK
+        string name
+        string description
+        string icon
+        boolean is_enabled
+        boolean is_core
+        json depends_on
     }
 ```
-
-## 🔗 Resumen de Relaciones y Cardinalidades
-
-| Entidad Origen | Entidad Destino | Tipo de Relación | Explicación |
-| :--- | :--- | :---: | :--- |
-| `ROLES` | `USUARIOS` | **$1:N$** | Un rol asigna permisos a múltiples usuarios. |
-| `PROPIETARIOS` | `TELEFONOS_PROPIETARIO` | **$1:N$** | Un propietario puede registrar $N$ números de contacto. |
-| `PROPIETARIOS` | `MASCOTAS_PACIENTES` | **$1:N$** | Un propietario puede ser dueño de $N$ mascotas. |
-| `PROPIETARIOS` | `VENTAS_CABECERA` | **$1:N$** | Un propietario realiza $N$ compras/facturas. |
-| `USUARIOS` | `VENTAS_CABECERA` | **$1:N$** | Un cajero/usuario atiende $N$ facturas de venta. |
-| `USUARIOS` | `COMPRAS_CABECERA` | **$1:N$** | Un usuario registra la recepción de $N$ órdenes de compra. |
-| `CATEGORIAS` | `PRODUCTOS` | **$1:N$** | Una categoría agrupa múltiples productos. |
-| `PROVEEDORES` | `COMPRAS_CABECERA` | **$1:N$** | Un proveedor suministra $N$ órdenes/facturas de compra. |
-| `COMPRAS_CABECERA` | `COMPRAS_DETALLE` | **$1:N$** | Una orden de compra contiene $N$ ítems de productos. |
-| `COMPRAS_DETALLE` | `LOTES_FARMACIA` | **$1:N$** | Un detalle de compra genera $N$ registros de lotes recibidos. |
-| `PRODUCTOS` | `LOTES_FARMACIA` | **$1:N$** | Un producto de farmacia maneja $N$ lotes de expiración. |
-| **`VENTAS_CABECERA`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante la tabla pivote `VENTAS_DETALLE` ($1:N$). |
-| **`PROVEEDORES`** | **`PRODUCTOS`** | **$N:M$** | **Muchos a Muchos:** Resuelta mediante el historial de compra `COMPRAS_CABECERA` / `COMPRAS_DETALLE` ($1:N$). |
-| **`VENTAS_CABECERA`** | **`PASARELA_PAGOS_LOGS`** | **$1:1$** | **Uno a Uno:** Cada factura electrónica genera 1 log de pago en pasarela. |
