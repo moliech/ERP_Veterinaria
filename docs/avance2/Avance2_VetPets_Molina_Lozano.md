@@ -214,7 +214,7 @@ En la Tabla 9 se muestran los permisos configurados para los tres roles del sist
 
 #### Tabla 9. Matriz de Permisos por Rol y Módulo
 
-| Módulo | Permiso (`acción-módulo`) | Admin (`admin`) | Almacenista (`almacenista`) | Vendedor (`vendedor`) | Supervisor (Rol Activo: `vendedor` + Directo) | Supervisor (Rol Activo: `almacenista` + Directo) |
+| Módulo | Permiso (acción-módulo) | Admin (admin) | Almacenista (almacenista) | Vendedor (vendedor) | Supervisor (Rol Activo: vendedor + Directo) | Supervisor (Rol Activo: almacenista + Directo) |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Inventario y Lotes / Tarifas e IVA** | `ver-productos` | ✅ | ✅ | ✅ | ✅ (Por Rol) | ✅ (Por Rol) |
 | | `crear-productos` | ✅ | ✅ | ❌ | ❌ | ✅ (Por Rol) |
