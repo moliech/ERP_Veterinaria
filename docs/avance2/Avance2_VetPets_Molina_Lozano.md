@@ -473,21 +473,21 @@ A continuación se presentan las capturas de pantalla organizadas según los pro
 ### Figura 1. Recepción Parcial de Compra y Aumento de Stock en MySQL
 Detalle de la orden de compra en estado `parcial` tras recibir 6 de 10 unidades, acompañada de la consulta SQL que evidencia el incremento de `current_stock` y la actualización de `cost_price`.
 
-![Figura 1 - Recepción de Compra y Stock en MySQL](docs/avance2/figura1.png)
+![Figura 1 - Recepción de Compra y Stock en MySQL](figura1.png)
 
 ---
 
 ### Figura 2. Configuración de Tarifas e IVA Diferencial (`/tarifas`)
 Módulo de precios comerciales con visualización del costo de compra, margen de rentabilidad calculado en vivo y asignación de tarifas de IVA (0 % exento, 5 % diferencial y 19 % general).
 
-![Figura 2 - Tarifas e IVA Diferencial](docs/avance2/figura2.png)
+![Figura 2 - Tarifas e IVA Diferencial](figura2.png)
 
 ---
 
 ### Figura 3. Venta POS con IVA Diferencial y Descuento en MySQL
 Facturación en mostrador combinando productos con diferentes tarifas impositivas y consulta en base de datos demostrando la deducción de unidades en el inventario.
 
-![Figura 3 - Venta POS con IVA Diferencial](docs/avance2/figura3.png)
+![Figura 3 - Venta POS con IVA Diferencial](figura3.png)
 
 ---
 
@@ -496,14 +496,14 @@ Mensaje de bloqueo al intentar vender más unidades de las existentes y comproba
 
 | 4A. Alerta por Stock Insuficiente | 4B. Factura Anulada y Retorno de Stock |
 | :---: | :---: |
-| ![Figura 4A - Alerta de Stock](docs/avance2/figura4A.png) | ![Figura 4B - Factura Anulada](docs/avance2/figura4B.png) |
+| ![Figura 4A - Alerta de Stock](figura4A.png) | ![Figura 4B - Factura Anulada](figura4B.png) |
 
 ---
 
 ### Figura 5. Factura de Venta Generada en PDF (`DomPDF`)
 Documento descargable con encabezado institucional de **Identidad Corporativa**, numeración secuencial, discriminación de lotes y liquidación detallada del IVA.
 
-![Figura 5 - Factura de Venta en PDF](docs/avance2/figura5.png)
+![Figura 5 - Factura de Venta en PDF](figura5.png)
 
 ---
 
@@ -512,14 +512,14 @@ Pantalla intermedia de `/rol-activo` para el usuario con múltiples perfiles y e
 
 | 6A. Selección de Rol Activo | 6B. Bloqueo 403 Forbidden |
 | :---: | :---: |
-| ![Figura 6A - Selección de Rol Activo](docs/avance2/figura6A.png) | ![Figura 6B - Error 403 Forbidden](docs/avance2/figura6B.png) |
+| ![Figura 6A - Selección de Rol Activo](figura6A.png) | ![Figura 6B - Error 403 Forbidden](figura6B.png) |
 
 ---
 
 ### Figura 7. Dashboard de Control con Indicadores y Reabastecimiento (`/dashboard`)
 Panel principal con el balance mensual de operaciones, los cinco productos más vendidos, alertas de stock crítico y control de lotes con fechas de vencimiento.
 
-![Figura 7 - Dashboard Principal](docs/avance2/figura7.png)
+![Figura 7 - Dashboard Principal](figura7.png)
 
 ---
 
