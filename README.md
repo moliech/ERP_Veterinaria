@@ -24,7 +24,7 @@ El repositorio mantiene la trazabilidad histórica de los avances y clases del s
 ### 📅 Histórico de Hitos y Clases Anteriores
 * **[Clase 7: Roles y Permisos con Spatie](#-clase-7-y-8-roles-permisos-spatie--soft-delete)**: Configuración de roles (`admin`, `almacenista`, `vendedor`), `HasMiddleware` y Soft Delete.
 * **[Clase 8 y 9: Integración de Módulos & Dashboard](#-clase-9-integración-de-módulos--dashboard-con-kpis)**: Clientes, transacciones con `DB::transaction`, descuento de stock y KPIs.
-* **Clase 10: Compras, Proveedores y Recepción Parcial**: Órdenes de compra (`purchases`), actualización de costo y recepción parcial/total.
+* **[Clase 10: Compras, Proveedores y Reportes PDF](docs/clase_10/README.md)**: Evidencias técnicas del módulo de abastecimiento, órdenes de compra, recepción parcial y generación de documentos en PDF.
 * **Clase 10.5 y Adicionales: Seguridad Avanzada, Rol Activo y Marca Blanca**: Matriz interactiva de permisos, Rol Activo en sesión, Identidad Corporativa y Gestión de Módulos.
 * **Avance 2: Separación de Inventario y Lotes vs. Tarifas e IVA Diferencial**: Control de lotes perecederos, semáforo de vencimiento y cálculo de IVA al 0 %, 5 % y 19 %.
 
@@ -133,6 +133,34 @@ Panel principal con el balance mensual de operaciones, los cinco productos más 
 ## 📸 Evidencias Técnicas Anteriores
 
 <details>
+<summary><strong>📦 Ver evidencias técnicas de la Clase 10: Compras, Proveedores y Reportes PDF (Desplegar)</strong></summary>
+
+> Memoria técnica completa, modelo de datos y reglas de abastecimiento documentadas en: **[`docs/clase_10/README.md`](docs/clase_10/README.md)**.
+
+#### 🏢 Captura 1. Directorio de Proveedores (`/providers`)
+![Listado de Proveedores](docs/clase_10/capturas/Captura%201_Listado%20de%20Proveedores.png)
+
+#### 📋 Captura 2. Formulario de Orden de Compra (`/purchases/create`)
+![Formulario de Orden de Compra](docs/clase_10/capturas/Captura%202_Formulario%20de%20Orden%20de%20Compra.png)
+
+#### 📦 Captura 3. Recepción Parcial de Orden de Compra (6 de 10 unidades)
+![Detalle Orden Parcial](docs/clase_10/capturas/Captura%203_Detalle%20Orden%20Parcial.png)
+
+#### ⚠️ Captura 4. Control de Sobrerecepción y Validación de Excepciones
+![Validación de Recepción](docs/clase_10/capturas/Captura%204_Validacion%20Error%20de%20Recepcion.png)
+
+#### 🗄️ Captura 5. Aumento de Stock Físico en MySQL tras Recepción
+![MySQL Stock Aumentado](docs/clase_10/capturas/Captura%205_MySQL%20Stock%20Aumentado.png)
+
+#### 📄 Captura 6. Generación de Documentos Formales en PDF (`DomPDF`)
+![Reportes PDF Generados](docs/clase_10/capturas/Captura%206_Reportes%20PDF%20Generados.png)
+
+#### 📊 Captura 7. Indicadores de Compras en el Dashboard Gerencial
+![Dashboard KPIs de Compras](docs/clase_10/capturas/Captura%207_Dashboard%20KPIs%20de%20Compras.png)
+
+</details>
+
+<details>
 <summary><strong>🔍 Ver capturas y validaciones técnicas de la Clase 8 y Clase 9 (Desplegar)</strong></summary>
 
 ### 👥 Módulo de Clientes / Propietarios (Clase 9)
@@ -172,6 +200,7 @@ ERP_Veterinaria/
 │   └── seeders/               # Seeders con >= 10 registros por tabla comercial y transacciones iniciales
 ├── docs/                      # Documentación Técnica y Evidencias
 │   ├── avance2/               # Documento oficial del Avance 2 y capturas de pantalla (figura1 a figura7)
+│   ├── clase_10/              # Memoria técnica y 7 capturas de la Clase 10 (Compras, Proveedores, PDF)
 │   ├── analisis.md            # Documento de Análisis del Negocio
 │   ├── diccionario.md         # Diccionario de Datos del Esquema
 │   ├── diagrama_mer.md        # Modelo Entidad-Relación (MER en Mermaid)
