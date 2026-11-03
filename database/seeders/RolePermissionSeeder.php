@@ -35,6 +35,12 @@ class RolePermissionSeeder extends Seeder
             // Compras (Clase 10: se agrega recibir-compras)
             'ver-compras', 'crear-compras', 'editar-compras', 'eliminar-compras', 'recibir-compras',
 
+            // Inventario & Kardex (Clase 12)
+            'ver-inventario', 'ajustar-inventario',
+
+            // Auditoría Forense (Clase 12)
+            'ver-auditoria',
+
             // Reportes
             'ver-reportes',
 
@@ -62,6 +68,7 @@ class RolePermissionSeeder extends Seeder
             'ver-categorias',
             'ver-proveedores', 'crear-proveedores', 'editar-proveedores',
             'ver-compras', 'crear-compras', 'recibir-compras',
+            'ver-inventario', 'ajustar-inventario',
         ]);
     }
 }

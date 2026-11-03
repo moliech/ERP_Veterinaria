@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Support\PermissionCatalog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Spatie\Activitylog\Facades\LogBatch;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -32,7 +33,13 @@ class AccessControlService
         // Regla 2: siempre debe quedar al menos un administrador activo
         $this->ensureAnAdminRemains($user, $roles, $active);
 
-        return DB::transaction(function () use ($user, $data, $roles, $active) {
+        $isNew = ! $user->exists;
+        $oldRoles = $user->exists ? $user->getRoleNames()->sort()->values()->all() : [];
+        $oldDirect = $user->exists ? $user->getDirectPermissions()->pluck('name')->sort()->values()->all() : [];
+
+        return DB::transaction(function () use ($user, $data, $roles, $active, $actor, $isNew, $oldRoles, $oldDirect) {
+            LogBatch::startBatch();
+
             $user->fill([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -43,7 +50,7 @@ class AccessControlService
                 $user->password = $data['password']; // el cast 'hashed' la encripta
             }
 
-            if (! $user->exists) {
+            if ($isNew) {
                 $user->email_verified_at = now(); // creado por un administrador: ya verificado
             }
 
@@ -51,6 +58,34 @@ class AccessControlService
 
             $user->syncRoles($roles);
             $user->syncPermissions($data['permissions'] ?? []); // permisos DIRECTOS
+
+            // Registro forense estructurado del cambio de privilegios
+            $newRoles = $user->getRoleNames()->sort()->values()->all();
+            $newDirect = $user->getDirectPermissions()->pluck('name')->sort()->values()->all();
+
+            if ($oldRoles !== $newRoles || $oldDirect !== $newDirect) {
+                activity('seguridad')
+                    ->performedOn($user)
+                    ->causedBy($actor)
+                    ->event($isNew ? 'roles_asignados' : 'roles_modificados')
+                    ->withProperties([
+                        'old' => [
+                            'roles'       => $oldRoles,
+                            'permissions' => $oldDirect,
+                        ],
+                        'attributes' => [
+                            'roles'       => $newRoles,
+                            'permissions' => $newDirect,
+                        ],
+                    ])
+                    ->log(sprintf(
+                        'Actualización de privilegios para el usuario %s (%s)',
+                        $user->name,
+                        $user->email
+                    ));
+            }
+
+            LogBatch::endBatch();
 
             return $user;
         });
