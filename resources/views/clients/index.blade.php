@@ -2,14 +2,14 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Gestión de Clientes y Propietarios') }}
+                {{ __('Gestión de Clientes') }}
             </h2>
 
             @can('crear-clientes')
                 <a href="{{ route('clients.create') }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-xs"></i>
-                    <span>+ Nuevo Cliente</span>
+                    <span>Nuevo Cliente</span>
                 </a>
             @endcan
         </div>

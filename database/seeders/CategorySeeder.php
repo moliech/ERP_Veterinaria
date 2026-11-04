@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Category;
+use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
@@ -11,51 +11,66 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Farmacia Veterinaria',
-                'description' => 'Medicamentos, antibióticos y vacunas'
+                'id' => 1,
+                'name' => 'Nutrición Canina Premium',
+                'description' => 'Alimentos concentrados secos y húmedos para perros cachorros, adultos y senior.',
             ],
             [
-                'name' => 'Alimentos y Nutrición',
-                'description' => 'Concentrados, latas y suplementos'
+                'id' => 2,
+                'name' => 'Nutrición Felina Especializada',
+                'description' => 'Concentrados super premium, sobres húmedos y fórmulas para gatos esterilizados.',
             ],
             [
-                'name' => 'Accesorios y Juguetes',
-                'description' => 'Collares, correas, camas y juguetes'
+                'id' => 3,
+                'name' => 'Snacks y Premios Funcionales',
+                'description' => 'Galletas horneadas, carnazas dentales, bocaditos liofilizados y premios de entrenamiento.',
             ],
             [
-                'name' => 'Higiene y Estética',
-                'description' => 'Champú, cepillos, colonias y cortaúñas'
+                'id' => 4,
+                'name' => 'Paseo, Collares y Arneses',
+                'description' => 'Arneses ergonómicos, traíllas retráctiles, collares reflectivos y placas de identificación.',
             ],
             [
-                'name' => 'Servicios Médicos',
-                'description' => 'Consultas, cirugías, ecografías y laboratorio'
+                'id' => 5,
+                'name' => 'Camas, Guacales y Descanso',
+                'description' => 'Camas ortopédicas, cojines térmicos, bolsos viajeros y guacales homologados.',
             ],
             [
-                'name' => 'Desparasitantes y Antipulgas',
-                'description' => 'Pipetas, pastillas y collares medicados'
+                'id' => 6,
+                'name' => 'Juguetes e Interacción',
+                'description' => 'Juguetes interactivos dispensadores, pelotas de caucho natural y mordedores resistentes.',
             ],
             [
-                'name' => 'Snacks y Premios',
-                'description' => 'Galletas, carnazas y bocadillos de entrenamiento'
+                'id' => 7,
+                'name' => 'Higiene, Baño y Estética',
+                'description' => 'Champús dermocosméticos, acondicionadores, perfumes, cepillos y cortaúñas.',
             ],
             [
-                'name' => 'Ropa y Moda Canina',
-                'description' => 'Capotas, impermeables y chalecos'
+                'id' => 8,
+                'name' => 'Cuidado Preventivo y Antipulgas',
+                'description' => 'Pipetas spot-on, collares antipulgas y tabletas masticables de venta comercial.',
             ],
             [
-                'name' => 'Arena y Muebles para Gatos',
-                'description' => 'Rascadores, gateras y arenas sanitarias'
+                'id' => 9,
+                'name' => 'Arenas Sanitarias y Rascadores',
+                'description' => 'Arenas aglomerantes biodegradables, areneros cubiertos, gimnasios y rascadores de sisal.',
             ],
             [
-                'name' => 'Especialidades Exóticas',
-                'description' => 'Insumos para aves, roedores y reptiles'
+                'id' => 10,
+                'name' => 'Comederos y Dispensadores',
+                'description' => 'Comederos antiansiedad, fuentes de agua automáticas y platos en acero inoxidable.',
             ],
         ];
 
         foreach ($categories as $cat) {
-            Category::updateOrCreate(
-                ['name' => $cat['name']],
-                $cat
+            Category::withTrashed()->updateOrCreate(
+                ['id' => $cat['id']],
+                [
+                    'name' => $cat['name'],
+                    'description' => $cat['description'],
+                    'active' => true,
+                    'deleted_at' => null,
+                ]
             );
         }
     }

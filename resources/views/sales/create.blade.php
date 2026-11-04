@@ -37,11 +37,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="client_id" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-                            Cliente / Propietario <span class="text-red-500">*</span>
+                            Cliente <span class="text-red-500">*</span>
                         </label>
                         <select id="client_id" name="client_id" 
                                 class="w-full border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm" required>
-                            <option value="">-- Seleccione un Propietario --</option>
+                            <option value="">-- Seleccione un Cliente --</option>
                             @foreach ($clients as $client)
                                 <option value="{{ $client->id }}" @selected(old('client_id') == $client->id)>
                                     {{ $client->first_name }} {{ $client->last_name }} — Doc: {{ $client->document_number }}
@@ -88,12 +88,12 @@
                         <button type="button" id="add-item-btn" 
                                 class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 font-semibold px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2">
                             <i class="fa-solid fa-plus text-xs"></i>
-                            <span>+ Agregar Producto</span>
+                            <span>Agregar Producto</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Resumen de Totales e Impuestos (IVA 19%) -->
+                <!-- Resumen de Totales e Impuestos -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">Subtotal</span>
@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">IVA (19% DIAN)</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block">IVA Liquidado (Según Tarifa 0% / 5% / 19%)</span>
                         <p id="tax-display" class="text-xl font-bold text-slate-800 mt-1">$0.00</p>
                     </div>
 
@@ -117,7 +117,7 @@
                         Notas u Observaciones (Opcional)
                     </label>
                     <textarea id="notes" name="notes" rows="2" 
-                              placeholder="Ej: Pago con tarjeta de crédito, indicaciones de dosificación..." 
+                              placeholder="Ej: Pago con tarjeta débito/crédito, entrega en mostrador..." 
                               class="w-full border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">{{ old('notes') }}</textarea>
                 </div>
 
@@ -147,8 +147,9 @@
                     @foreach ($products as $product)
                         <option value="{{ $product->id }}" 
                                 data-price="{{ $product->sale_price }}" 
+                                data-tax="{{ $product->tax_rate ?? $company->tax_rate ?? 19 }}"
                                 data-stock="{{ $product->current_stock }}">
-                            {{ $product->name }} (Disponible: {{ $product->current_stock }} uds) - ${{ number_format($product->sale_price, 2) }}
+                            {{ $product->name }} {{ $product->batch_code ? '['.$product->batch_code.']' : '' }} (Disp: {{ $product->current_stock }}) - ${{ number_format($product->sale_price, 0) }} + IVA {{ number_format((float) ($product->tax_rate ?? 19), 0) }}%
                         </option>
                     @endforeach
                 </select>
@@ -217,6 +218,7 @@
 
         function recalculateTotals() {
             let subtotal = 0;
+            let tax = 0;
             const rows = document.querySelectorAll('.item-row');
 
             rows.forEach(row => {
@@ -227,19 +229,21 @@
 
                 const selectedOption = select.options[select.selectedIndex];
                 const price = parseFloat(selectedOption?.dataset?.price || 0);
+                const taxRate = parseFloat(selectedOption?.dataset?.tax ?? {{ (float) ($company->tax_rate ?? 19) }}) / 100;
                 const maxStock = parseInt(selectedOption?.dataset?.stock || 0);
                 let qty = parseInt(qtyInput.value || 0);
 
                 if (qty < 1) qty = 1;
 
                 const lineSubtotal = price * qty;
+                const lineTax = lineSubtotal * taxRate;
                 priceDisplay.textContent = formatCOP(price);
                 subtotalDisplay.textContent = formatCOP(lineSubtotal);
 
                 subtotal += lineSubtotal;
+                tax += lineTax;
             });
 
-            const tax = subtotal * 0.19;
             const total = subtotal + tax;
 
             document.getElementById('subtotal-display').textContent = formatCOP(subtotal);

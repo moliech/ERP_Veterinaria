@@ -9,7 +9,7 @@
                 <a href="{{ route('categories.create') }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-xs"></i>
-                    <span>+ Nueva Categoría</span>
+                    <span>Nueva Categoría</span>
                 </a>
             @endcan
         </div>

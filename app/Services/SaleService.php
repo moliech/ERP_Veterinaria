@@ -29,9 +29,12 @@ class SaleService
                 $quantities[$productId] = ($quantities[$productId] ?? 0) + (int) $item['quantity'];
             }
 
-            // 2. Validar disponibilidad de stock y calcular subtotales
+            // 2. Validar disponibilidad de stock, vigencia de lote y calcular subtotales + IVA diferencial por tarifa
             $itemsToProcess = [];
             $subtotal = 0;
+            $taxTotal = 0;
+            $company = \App\Models\CompanySetting::current();
+            $defaultTaxRate = (float) ($company->tax_rate ?? 19);
 
             foreach ($quantities as $productId => $quantity) {
                 // lockForUpdate() bloquea la fila en MySQL hasta terminar la transacción (evita concurrencia)
@@ -44,7 +47,14 @@ class SaleService
                     ]);
                 }
 
-                // Regla de Negocio 2: Stock insuficiente
+                // Regla de Negocio 2: Control de vencimiento de lote
+                if ($product->expiration_date && $product->expiration_date->startOfDay()->isPast()) {
+                    throw ValidationException::withMessages([
+                        'items' => "El lote «" . ($product->batch_code ?? 'S/L') . "» del producto «{$product->name}» venció el {$product->expiration_date->format('d/m/Y')} y no se puede vender.",
+                    ]);
+                }
+
+                // Regla de Negocio 3: Stock insuficiente
                 if ($product->current_stock < $quantity) {
                     throw ValidationException::withMessages([
                         'items' => "Stock insuficiente para «{$product->name}». Disponible: {$product->current_stock} unidades, Solicitado: {$quantity}.",
@@ -52,7 +62,11 @@ class SaleService
                 }
 
                 $lineSubtotal = $product->sale_price * $quantity;
+                $productTaxRate = ($product->tax_rate !== null ? (float) $product->tax_rate : $defaultTaxRate) / 100;
+                $lineTax = round($lineSubtotal * $productTaxRate, 2);
+
                 $subtotal += $lineSubtotal;
+                $taxTotal += $lineTax;
 
                 $itemsToProcess[] = [
                     'product' => $product,
@@ -62,8 +76,8 @@ class SaleService
                 ];
             }
 
-            // 3. Cálculo de IVA (19% en Colombia) y Total
-            $tax = round($subtotal * 0.19, 2);
+            // 3. Liquidación de IVA Diferencial acumulado por tarifa de producto y Total
+            $tax = round($taxTotal, 2);
             $total = round($subtotal + $tax, 2);
 
             // 4. Crear la cabecera de la venta (Factura)
@@ -130,7 +144,8 @@ class SaleService
     {
         $lastSale = Sale::withTrashed()->orderByDesc('id')->first();
         $nextId = $lastSale ? $lastSale->id + 1 : 1;
+        $prefix = trim((string) (\App\Models\CompanySetting::current()->invoice_prefix ?? 'FV'), '-');
 
-        return 'FV-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        return $prefix . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
     }
 }

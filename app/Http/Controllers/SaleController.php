@@ -67,8 +67,12 @@ class SaleController extends Controller implements HasMiddleware
         $clients = Owner::orderBy('first_name')->get(['id', 'first_name', 'last_name', 'document_number']);
         $products = Product::where('active', true)
             ->where('current_stock', '>', 0)
+            ->where(function ($q) {
+                $q->whereNull('expiration_date')
+                  ->orWhereDate('expiration_date', '>=', now()->toDateString());
+            })
             ->orderBy('name')
-            ->get(['id', 'name', 'sale_price', 'current_stock']);
+            ->get(['id', 'name', 'sale_price', 'tax_rate', 'batch_code', 'expiration_date', 'current_stock']);
 
         return view('sales.create', compact('clients', 'products'));
     }

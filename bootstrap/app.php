@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureActiveRole;
+use App\Http\Middleware\EnsureModuleEnabled;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,11 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware){
+    ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'module' => EnsureModuleEnabled::class,
+        ]);
+
+        // Se ejecuta en TODAS las rutas web: usuario activo + rol activo elegido
+        $middleware->web(append: [
+            EnsureActiveRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

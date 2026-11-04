@@ -9,7 +9,7 @@
                     <h2 class="font-bold text-xl text-gray-800 leading-tight">
                         Factura de Venta: <span class="text-emerald-600">{{ $sale->invoice_number }}</span>
                     </h2>
-                    <span class="text-xs text-slate-500">Comprobante de Transacción VetPets ERP</span>
+                    <span class="text-xs text-slate-500">Comprobante de Transacción — {{ $company->company_name }}</span>
                 </div>
             </div>
 
@@ -36,16 +36,16 @@
             <!-- Card de Factura -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
 
-                <!-- Encabezado de Factura -->
+                <!-- Encabezado de Factura (Identidad Corporativa Dinámica) -->
                 <div class="flex flex-col md:flex-row justify-between border-b border-slate-100 pb-6 gap-6">
                     <div>
                         <div class="flex items-center space-x-2 text-emerald-600 font-black text-xl tracking-wide mb-1">
-                            <i class="fa-solid fa-paw"></i>
-                            <span>VetPets ERP</span>
+                            <i class="{{ $company->icon_class }}"></i>
+                            <span>{{ $company->company_name }}</span>
                         </div>
-                        <p class="text-xs text-slate-500">Clínica Veterinaria & PetShop Especializado</p>
-                        <p class="text-xs text-slate-500">NIT: 900.123.456-7 | Régimen Común</p>
-                        <p class="text-xs text-slate-500">Cartago, Valle del Cauca, Colombia</p>
+                        <p class="text-xs text-slate-600 font-semibold uppercase tracking-wider">{{ $company->business_subtitle }}</p>
+                        <p class="text-xs text-slate-500 mt-0.5">NIT: {{ $company->nit }} | Régimen Común</p>
+                        <p class="text-xs text-slate-500">{{ $company->address }}@if($company->phone) · Tel: {{ $company->phone }}@endif</p>
                     </div>
 
                     <div class="md:text-right space-y-1">
@@ -75,9 +75,9 @@
                     </div>
                 </div>
 
-                <!-- Datos del Cliente / Propietario -->
+                <!-- Datos del Cliente -->
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Información del Cliente / Propietario</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Información del Cliente</span>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                         <div>
                             <span class="text-slate-500 block">Nombre Completo:</span>
@@ -110,6 +110,12 @@
                                 <tr class="hover:bg-slate-50 transition">
                                     <td class="px-4 py-3 text-sm font-semibold text-slate-900">
                                         {{ $detail->product->name ?? 'Producto no disponible' }}
+                                        <div class="text-[11px] font-normal text-slate-500">
+                                            @if ($detail->product?->batch_code)
+                                                Lote: <span class="font-mono">{{ $detail->product->batch_code }}</span> ·
+                                            @endif
+                                            Tarifa IVA: <strong>{{ number_format((float) ($detail->product->tax_rate ?? 19), 0) }}%</strong>
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3 text-sm text-center text-slate-700">
                                         {{ $detail->quantity }}
@@ -134,7 +140,7 @@
                             <span class="font-medium">${{ number_format($sale->subtotal, 2) }}</span>
                         </div>
                         <div class="flex justify-between text-slate-600">
-                            <span>IVA Generado (19%):</span>
+                            <span>IVA Liquidado (Según Tarifas):</span>
                             <span class="font-medium">${{ number_format($sale->tax, 2) }}</span>
                         </div>
                         <div class="flex justify-between text-lg font-black text-emerald-700 pt-2 border-t border-slate-200">
@@ -147,6 +153,12 @@
                 @if ($sale->notes)
                     <div class="bg-slate-50 p-3 rounded-xl text-xs text-slate-600 border border-slate-100">
                         <strong>Observaciones:</strong> {{ $sale->notes }}
+                    </div>
+                @endif
+
+                @if ($company->invoice_footer)
+                    <div class="text-center text-xs text-slate-400 pt-2 border-t border-slate-100">
+                        {{ $company->invoice_footer }}
                     </div>
                 @endif
 

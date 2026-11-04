@@ -9,7 +9,7 @@
                 <a href="{{ route('sales.create') }}"
                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus text-sm"></i>
-                    <span>+ Registrar Nueva Venta</span>
+                    <span>Registrar Nueva Venta</span>
                 </a>
             @endcan
         </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-<<<<<<< Updated upstream
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\Owner;
@@ -55,9 +54,3 @@ class UpdateClientRequest extends FormRequest
         ];
     }
 }
-=======
-class UpdateClientRequest extends StoreClientRequest
-{
-    
-}
->>>>>>> Stashed changes

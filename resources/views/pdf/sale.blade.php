@@ -2,20 +2,20 @@
 
 @section('title', 'Factura de venta ' . $sale->invoice_number)
 
-@section('doc_type', 'Factura de venta POS')
+@section('doc_type', 'Factura de Venta POS')
 
 @section('doc_number', $sale->invoice_number)
 
 @section('content')
 <style>
-.section-title {
-font-size: 12px;
-font-weight: bold;
-color: #065f46;
-border-bottom: 1px solid #d1d5db;
-padding-bottom: 5px;
-margin-top: 12px;
-}
+    .section-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: #0f172a;
+        border-bottom: 1px solid #d1d5db;
+        padding-bottom: 5px;
+        margin-top: 12px;
+    }
 
     .info-table {
         width: 100%;
@@ -95,14 +95,14 @@ margin-top: 12px;
     </tr>
 </table>
 
-<div class="section-title">DETALLE DE PRODUCTOS</div>
+<div class="section-title">DETALLE DE PRODUCTOS COMERCIALES</div>
 
 <table class="data">
     <thead>
         <tr>
             <th style="width: 9%;">Cant.</th>
-            <th style="width: 37%;">Producto</th>
-            <th style="width: 22%;" class="text-right">Precio unitario</th>
+            <th style="width: 37%;">Producto / Artículo</th>
+            <th style="width: 22%;" class="text-right">Precio Unitario</th>
             <th style="width: 32%;" class="text-right">Subtotal</th>
         </tr>
     </thead>
@@ -110,7 +110,13 @@ margin-top: 12px;
         @forelse ($sale->details as $detail)
             <tr>
                 <td>{{ $detail->quantity }}</td>
-                <td>{{ $detail->product?->name ?? 'Producto no disponible' }}</td>
+                <td>
+                    {{ $detail->product?->name ?? 'Producto no disponible' }}
+                    @if ($detail->product?->batch_code)
+                        <span style="font-size: 9px; color: #64748b;"> [Lote: {{ $detail->product->batch_code }}]</span>
+                    @endif
+                    <span style="font-size: 9px; color: #64748b;"> (IVA {{ number_format((float) ($detail->product?->tax_rate ?? 19), 0) }}%)</span>
+                </td>
                 <td class="text-right">
                     ${{ number_format((float) $detail->unit_price, 2, ',', '.') }}
                 </td>
@@ -134,7 +140,7 @@ margin-top: 12px;
         </td>
     </tr>
     <tr>
-        <td>Impuestos:</td>
+        <td>IVA Liquidado (Según Tarifas):</td>
         <td class="text-right">
             ${{ number_format((float) $sale->tax, 2, ',', '.') }}
         </td>
@@ -153,7 +159,4 @@ margin-top: 12px;
         {{ $sale->notes }}
     </div>
 @endif
-
-<p style="margin-top: 25px; text-align: center; font-size: 9px; color: #64748b;">
-    Gracias por confiar en VetPets ERP.
-</p>
+@endsection
