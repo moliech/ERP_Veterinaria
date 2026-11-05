@@ -9,6 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class SaleService
 {
+    public function __construct(
+        protected ?InventoryService $inventory = null
+    ) {
+        $this->inventory = $inventory ?? (class_exists(InventoryService::class) ? app(InventoryService::class) : null);
+    }
     /**
      * Registra una venta completa en la base de datos dentro de una transacción.
      * Descuenta automáticamente el stock de los productos.
@@ -102,8 +107,12 @@ class SaleService
                     'subtotal'   => $item['subtotal'],
                 ]);
 
-                // Descuento automático de inventario
-                $item['product']->decrement('current_stock', $item['quantity']);
+                // Descuento automático de inventario y registro en Kardex
+                if ($this->inventory) {
+                    $this->inventory->exit($item['product'], $item['quantity'], 'venta', $sale, (float) $item['unit_price']);
+                } else {
+                    $item['product']->decrement('current_stock', $item['quantity']);
+                }
             }
 
             return $sale;
@@ -120,10 +129,14 @@ class SaleService
     public function cancel(Sale $sale): Sale
     {
         return DB::transaction(function () use ($sale) {
-            // Regla Inversa: Devolver stock a cada producto
+            // Regla Inversa: Devolver stock a cada producto y asentar en Kardex
             foreach ($sale->details as $detail) {
                 if ($detail->product) {
-                    $detail->product->increment('current_stock', $detail->quantity);
+                    if ($this->inventory) {
+                        $this->inventory->entry($detail->product, $detail->quantity, 'anulacion_venta', $sale, (float) $detail->unit_price);
+                    } else {
+                        $detail->product->increment('current_stock', $detail->quantity);
+                    }
                 }
             }
 

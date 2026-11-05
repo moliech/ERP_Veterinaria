@@ -9,6 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class PurchaseService
 {
+    public function __construct(
+        protected ?InventoryService $inventory = null
+    ) {
+        $this->inventory = $inventory ?? (class_exists(InventoryService::class) ? app(InventoryService::class) : null);
+    }
     /**
      * 1. Registrar una nueva orden de compra (Estado PENDIENTE, NO modifica stock).
      */
@@ -98,8 +103,19 @@ class PurchaseService
                     // Aumentar cantidad recibida acumulada en la línea
                     $detail->increment('received_quantity', $qtyToReceive);
 
-                    // Aumentar stock físico en la bodega y sincronizar último costo de adquisición
-                    $detail->product->increment('current_stock', $qtyToReceive);
+                    // Aumentar stock físico en la bodega y asentar en Kardex
+                    if ($this->inventory) {
+                        $this->inventory->entry(
+                            Product::withTrashed()->findOrFail($detail->product_id),
+                            $qtyToReceive,
+                            'compra',
+                            $purchase,
+                            (float) $detail->unit_cost
+                        );
+                    } else {
+                        $detail->product->increment('current_stock', $qtyToReceive);
+                    }
+
                     if ((float) $detail->unit_cost > 0) {
                         $detail->product->update(['cost_price' => $detail->unit_cost]);
                     }

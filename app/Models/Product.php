@@ -17,6 +17,7 @@ class Product extends Model
         'cost_price',
         'sale_price',
         'tax_rate',
+        'stock',
         'current_stock',
         'minimum_stock',
         'batch_code',
@@ -59,6 +60,11 @@ class Product extends Model
     public function getStockAttribute(): int
     {
         return (int) $this->current_stock;
+    }
+
+    public function setStockAttribute($value): void
+    {
+        $this->attributes['current_stock'] = (int) $value;
     }
 
     public function profitMargin(): float

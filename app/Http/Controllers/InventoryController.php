@@ -24,7 +24,7 @@ class InventoryController extends Controller implements HasMiddleware
 
     public function kardex(Request $request)
     {
-        $products = Product::withTrashed()->orderBy('name')->get(['id', 'name', 'stock', 'deleted_at']);
+        $products = Product::withTrashed()->orderBy('name')->get(['id', 'name', 'current_stock', 'deleted_at']);
         $product = $request->filled('product') ? $products->firstWhere('id', (int) $request->input('product')) : null;
         $movements = $product ? $this->movementsQuery($request, $product)->paginate(20)->withQueryString() : null;
 
@@ -39,7 +39,7 @@ class InventoryController extends Controller implements HasMiddleware
 
     public function pdf(Request $request, Product $product)
     {
-        return Pdf::loadView('pdf.Kardex', [
+        return Pdf::loadView('pdf.kardex', [
             'product'   => $product,
             'movements' => $this->movementsQuery($request, $product)->get(),
             'totals'    => $this->totals($request, $product),

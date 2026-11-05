@@ -84,6 +84,19 @@ Route::middleware('auth')->group(function () {
         Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
     });
 
+    // Kardex y Ajustes de Inventario (Clase 12)
+    if (class_exists(\App\Http\Controllers\InventoryController::class)) {
+        Route::get('inventario/kardex', [\App\Http\Controllers\InventoryController::class, 'kardex'])->name('inventory.kardex');
+        Route::get('inventario/kardex/{product}/pdf', [\App\Http\Controllers\InventoryController::class, 'pdf'])->withTrashed()->name('inventory.pdf');
+        Route::get('inventario/ajustes/{product}', [\App\Http\Controllers\InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::post('inventario/ajustes/{product}', [\App\Http\Controllers\InventoryController::class, 'storeAdjustment'])->name('inventory.adjust.store');
+    }
+
+    // Bitácora de Auditoría Forense (Clase 12)
+    if (class_exists(\App\Http\Controllers\AuditController::class)) {
+        Route::get('auditoria', [\App\Http\Controllers\AuditController::class, 'index'])->name('audit.index');
+    }
+
     // Configuración: seguridad, identidad corporativa y gestión de módulos
     Route::prefix('configuracion')->name('settings.')->group(function () {
         Route::get('/', SettingsController::class)->name('index');

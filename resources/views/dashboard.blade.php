@@ -43,6 +43,13 @@
                         <span>Categoría</span>
                     </a>
                 @endcan
+                @can('ver-inventario')
+                    <a href="{{ route('inventory.kardex') }}"
+                       class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold border border-slate-300 px-3 py-2 rounded-xl text-xs transition shadow-sm">
+                        <i class="fa-solid fa-warehouse text-emerald-600"></i>
+                        <span>Kardex</span>
+                    </a>
+                @endcan
             </div>
         </div>
     </x-slot>

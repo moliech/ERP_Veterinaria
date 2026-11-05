@@ -14,7 +14,7 @@
             {{-- Bloque 1: Seguridad y Control de Acceso --}}
             <div class="space-y-3">
                 <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">1. Seguridad, Usuarios y Permisos</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     @can('ver-usuarios')
                         <a href="{{ route('settings.users.index') }}" class="bg-white shadow rounded-xl p-6 hover:shadow-lg transition border border-slate-100">
                             <div class="flex items-center justify-between">
@@ -43,6 +43,16 @@
                             </div>
                             <p class="text-3xl font-bold mt-2 text-slate-800">{{ $permissionsCount }}</p>
                             <p class="text-sm text-gray-600 mt-1">Permisos por rol, módulo y usuario.</p>
+                        </a>
+                    @endcan
+                    @can('ver-auditoria')
+                        <a href="{{ route('audit.index') }}" class="bg-white shadow rounded-xl p-6 hover:shadow-lg transition border border-slate-100">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold text-lg text-blue-700">Bitácora de Auditoría</h4>
+                                <i class="fa-solid fa-fingerprint text-blue-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold mt-2 text-slate-800"><i class="fa-solid fa-shield-halved text-emerald-600 text-2xl"></i></p>
+                            <p class="text-sm text-gray-600 mt-1">Trazabilidad forense y visual diffs de cambios.</p>
                         </a>
                     @endcan
                 </div>

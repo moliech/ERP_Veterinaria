@@ -120,6 +120,14 @@
                                                 </form>
                                             @endcan
                                         @else
+                                            @can('ver-inventario')
+                                                <a href="{{ route('inventory.kardex', ['product' => $product->id]) }}"
+                                                   class="text-emerald-600 hover:text-emerald-900 font-bold"
+                                                   title="Ver libro mayor del producto">
+                                                    Kardex
+                                                </a>
+                                            @endcan
+
                                             @can('editar-productos')
                                                 <a href="{{ route('products.edit', $product) }}"
                                                    class="text-indigo-600 hover:text-indigo-900 font-bold">

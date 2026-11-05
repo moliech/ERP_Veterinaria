@@ -102,40 +102,4 @@
             </div>
         </div>
     </div>
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Ajuste de inventario: {{ $product->name }}</h2>
-    </x-slot>
-
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <form method="POST" action="{{ route('inventory.adjust.store', $product) }}" class="bg-white shadow rounded p-6 space-y-4">
-                @csrf
-                <p class="text-sm text-gray-600">
-                    Un ajuste se realiza tras un <strong>conteo físico</strong>: digite la cantidad real encontrada en bodega y el sistema registrará la diferencia como entrada o salida en el Kardex.
-                </p>
-
-                <div class="rounded bg-gray-50 p-3">
-                    Stock actual en el sistema: <strong class="text-lg">{{ $product->stock }}</strong> unidades
-                </div>
-
-                <div>
-                    <x-input-label for="counted_stock" value="Cantidad contada físicamente en bodega" />
-                    <x-text-input id="counted_stock" name="counted_stock" type="number" min="0" step="1" class="mt-1 block w-48 font-bold text-lg" :value="old('counted_stock', $product->stock)" required />
-                    <x-input-error class="mt-2" :messages="$errors->get('counted_stock')" />
-                </div>
-
-                <div>
-                    <x-input-label for="reason" value="Motivo del ajuste (obligatorio, mín. 10 caracteres)" />
-                    <x-textarea id="reason" name="reason" rows="2" class="mt-1 block w-full" placeholder="Ej.: Conteo físico de cierre mensual: 1 unidad averiada por humedad" required>{{ old('reason') }}</x-textarea>
-                    <x-input-error class="mt-2" :messages="$errors->get('reason')" />
-                </div>
-
-                <div class="flex items-center gap-4 pt-2">
-                    <x-primary-button onclick="return confirm('¿Confirma registrar el ajuste físico de inventario?')">Registrar ajuste</x-primary-button>
-                    <a href="{{ route('inventory.kardex', ['product' => $product->id]) }}" class="underline text-sm text-slate-600">Cancelar</a>
-                </div>
-            </form>
-        </div>
-    </div>
 </x-app-layout>

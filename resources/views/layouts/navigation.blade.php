@@ -25,6 +25,12 @@
                         </x-nav-link>
                     @endcan
 
+                    @can('ver-inventario')
+                        <x-nav-link :href="route('inventory.kardex')" :active="request()->routeIs('inventory.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-warehouse mr-1.5 text-emerald-600"></i> {{ __('Kardex') }}
+                        </x-nav-link>
+                    @endcan
+
                     @can('ver-categorias')
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')" class="text-slate-700 font-medium">
                             <i class="fa-solid fa-tags mr-1.5 text-emerald-600"></i> {{ __('Categorías') }}
@@ -60,6 +66,12 @@
                             <i class="fa-solid fa-gear mr-1.5 text-emerald-600"></i> {{ __('Configuración') }}
                         </x-nav-link>
                     @endcanany
+
+                    @can('ver-auditoria')
+                        <x-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.*')" class="text-slate-700 font-medium">
+                            <i class="fa-solid fa-fingerprint mr-1.5 text-emerald-600"></i> {{ __('Auditoría') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -128,6 +140,12 @@
                 </x-responsive-nav-link>
             @endcan
 
+            @can('ver-inventario')
+                <x-responsive-nav-link :href="route('inventory.kardex')" :active="request()->routeIs('inventory.*')">
+                    <i class="fa-solid fa-warehouse mr-2 text-emerald-600"></i> {{ __('Kardex') }}
+                </x-responsive-nav-link>
+            @endcan
+
             @can('ver-categorias')
                 <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                     <i class="fa-solid fa-tags mr-2 text-emerald-600"></i> {{ __('Categorías') }}
@@ -163,6 +181,12 @@
                     <i class="fa-solid fa-gear mr-2 text-emerald-600"></i> {{ __('Configuración') }}
                 </x-responsive-nav-link>
             @endcanany
+
+            @can('ver-auditoria')
+                <x-responsive-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.*')">
+                    <i class="fa-solid fa-fingerprint mr-2 text-emerald-600"></i> {{ __('Auditoría') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200">
