@@ -51,6 +51,11 @@ class Product extends Model
         return $this->hasMany(SaleDetail::class);
     }
 
+    public function movements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
     public function getStockAttribute(): int
     {
         return (int) $this->current_stock;
