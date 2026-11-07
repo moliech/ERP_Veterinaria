@@ -37,6 +37,7 @@ return [
         'recibir' => 'Recibir',
         'ajustar' => 'Ajustar',
         'exportar' => 'Exportar',
+        'importar' => 'Importar',
         'aprobar' => 'Aprobar',
     ],
 

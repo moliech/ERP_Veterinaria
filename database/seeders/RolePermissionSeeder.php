@@ -38,6 +38,10 @@ class RolePermissionSeeder extends Seeder
             // Inventario & Kardex (Clase 12)
             'ver-inventario', 'ajustar-inventario',
 
+            // Interoperabilidad & Excel (Clase 13)
+            'exportar-productos', 'importar-productos',
+            'exportar-ventas',
+
             // Auditoría Forense (Clase 12)
             'ver-auditoria',
 
@@ -60,11 +64,11 @@ class RolePermissionSeeder extends Seeder
         Role::findOrCreate('vendedor')->syncPermissions([
             'ver-productos',
             'ver-clientes', 'crear-clientes', 'editar-clientes',
-            'ver-ventas', 'crear-ventas',
+            'ver-ventas', 'crear-ventas', 'exportar-ventas',
         ]);
 
         Role::findOrCreate('almacenista')->syncPermissions([
-            'ver-productos', 'crear-productos', 'editar-productos',
+            'ver-productos', 'crear-productos', 'editar-productos', 'exportar-productos', 'importar-productos',
             'ver-categorias',
             'ver-proveedores', 'crear-proveedores', 'editar-proveedores',
             'ver-compras', 'crear-compras', 'recibir-compras',

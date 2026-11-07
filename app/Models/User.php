@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
@@ -15,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use Auditable, HasFactory, HasRoles, Notifiable;
+    use Auditable, HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name', 'email', 'password', 'active',
@@ -52,6 +53,17 @@ class User extends Authenticatable
      */
     public function activeRole(): ?Role
     {
+        // 1. Detección en peticiones API mediante habilidades del token Sanctum (rol:{nombre})
+        if (request()->is('api/*') && $this->currentAccessToken()) {
+            foreach ($this->currentAccessToken()->abilities as $ability) {
+                if (str_starts_with($ability, 'rol:')) {
+                    $roleName = substr($ability, 4);
+                    return $this->roles->firstWhere('name', $roleName);
+                }
+            }
+        }
+
+        // 2. Detección web tradicional
         $roles = $this->roles;
 
         if ($roles->count() === 1) {

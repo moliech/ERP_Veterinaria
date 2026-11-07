@@ -97,6 +97,31 @@ Route::middleware('auth')->group(function () {
         Route::get('auditoria', [\App\Http\Controllers\AuditController::class, 'index'])->name('audit.index');
     }
 
+    // Interoperabilidad e Importación / Exportación Excel (Clase 13)
+    if (class_exists(\App\Http\Controllers\ExcelController::class)) {
+        Route::controller(\App\Http\Controllers\ExcelController::class)->group(function () {
+            Route::get('productos/exportar', 'exportProducts')
+                ->name('products.export')
+                ->middleware('permission:exportar-productos');
+
+            Route::get('productos/plantilla', 'exportTemplate')
+                ->name('products.template')
+                ->middleware('permission:importar-productos');
+
+            Route::get('productos/importar', 'importProductsForm')
+                ->name('products.import.form')
+                ->middleware('permission:importar-productos');
+
+            Route::post('productos/importar', 'importProducts')
+                ->name('products.import')
+                ->middleware('permission:importar-productos');
+
+            Route::get('ventas/exportar', 'exportSales')
+                ->name('sales.export')
+                ->middleware('permission:exportar-ventas');
+        });
+    }
+
     // Configuración: seguridad, identidad corporativa y gestión de módulos
     Route::prefix('configuracion')->name('settings.')->group(function () {
         Route::get('/', SettingsController::class)->name('index');
