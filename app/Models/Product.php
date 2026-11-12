@@ -67,6 +67,16 @@ class Product extends Model
         $this->attributes['current_stock'] = (int) $value;
     }
 
+    public function getPriceAttribute(): float
+    {
+        return (float) $this->sale_price;
+    }
+
+    public function setPriceAttribute($value): void
+    {
+        $this->attributes['sale_price'] = $value;
+    }
+
     public function profitMargin(): float
     {
         $cost = (float) $this->cost_price;

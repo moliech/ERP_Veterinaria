@@ -54,7 +54,7 @@ class User extends Authenticatable
     public function activeRole(): ?Role
     {
         // 1. Detección en peticiones API mediante habilidades del token Sanctum (rol:{nombre})
-        if (request()->is('api/*') && $this->currentAccessToken()) {
+        if ($this->currentAccessToken()) {
             foreach ($this->currentAccessToken()->abilities as $ability) {
                 if (str_starts_with($ability, 'rol:')) {
                     $roleName = substr($ability, 4);
