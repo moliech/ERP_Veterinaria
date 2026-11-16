@@ -140,6 +140,11 @@ class PurchaseService
                 'received_at' => $allCompleted ? now() : $purchase->received_at,
             ]);
 
+            // Disparo del evento de compra recibida (Clase 14)
+            if (class_exists(\App\Events\PurchaseReceived::class)) {
+                \App\Events\PurchaseReceived::dispatch($purchase, $allCompleted);
+            }
+
             return $purchase;
         });
     }

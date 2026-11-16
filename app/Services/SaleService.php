@@ -115,6 +115,11 @@ class SaleService
                 }
             }
 
+            // Disparo del evento de venta registrada (Clase 14)
+            if (class_exists(\App\Events\SaleRegistered::class)) {
+                \App\Events\SaleRegistered::dispatch($sale);
+            }
+
             return $sale;
         });
     }
