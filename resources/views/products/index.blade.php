@@ -10,22 +10,38 @@
                 </p>
             </div>
 
-            <div class="flex items-center space-x-2">
-                <a href="{{ route('pricing.index') }}"
-                   class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm text-xs transition flex items-center space-x-2">
-                    <i class="fa-solid fa-tags"></i>
-                    <span>Módulo de Tarifas e IVA</span>
-                </a>
+            <div class="flex items-center space-x-2 flex-wrap">
 
-                @can('crear-productos')
-                    <a href="{{ route('products.create') }}"
-                       class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                        <span>Registrar Producto / Lote</span>
-                    </a>
-                @endcan
-            </div>
-        </div>
+    <a href="{{ route('pricing.index') }}"
+       class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm text-xs transition flex items-center space-x-2">
+        <i class="fa-solid fa-tags"></i>
+        <span>Módulo de Tarifas e IVA</span>
+    </a>
+
+    @can('exportar-productos')
+        <a href="{{ route('products.export') }}"
+           class="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+            <i class="fa-solid fa-file-excel text-emerald-600"></i> Exportar
+        </a>
+    @endcan
+
+    @can('importar-productos')
+        <a href="{{ route('products.import.form') }}"
+           class="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+            <i class="fa-solid fa-file-import text-teal-600"></i> Importar
+        </a>
+    @endcan
+
+    @can('crear-productos')
+        <a href="{{ route('products.create') }}"
+           class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm text-sm transition flex items-center space-x-2">
+            <i class="fa-solid fa-plus text-xs"></i>
+            <span>Registrar Producto / Lote</span>
+        </a>
+    @endcan
+
+</div>
+ </div>
     </x-slot>
 
     <div class="py-8">
