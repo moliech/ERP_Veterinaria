@@ -1,11 +1,19 @@
 # VetPets ERP — Sistema de Gestión Empresarial para Tienda de Mascotas (PetShop)
 
-**VetPets ERP** es una aplicación web empresarial desarrollada en **Laravel 11+, MySQL 8.4 y Docker Sail**, diseñada para la administración comercial integral de tiendas de mascotas. El sistema integra el ciclo comercial completo: catálogo, inventario y control de lotes con fechas de vencimiento, módulo de tarifas comerciales con IVA diferencial (0 %, 5 % y 19 %), proveedores, órdenes de compra con recepción parcial o total, facturación POS, documentos PDF, dashboard gerencial y un esquema de seguridad con rol activo en sesión.
+[![Pruebas del ERP](https://github.com/moliech/ERP_Veterinaria/actions/workflows/pruebas.yml/badge.svg)](https://github.com/moliech/ERP_Veterinaria/actions/workflows/pruebas.yml)
+![Laravel](https://img.shields.io/badge/Laravel-11+-FF2D20?style=flat&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.4-777BB4?style=flat&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1?style=flat&logo=mysql&logoColor=white)
+![Docker Sail](https://img.shields.io/badge/Docker-Sail-2496ED?style=flat&logo=docker&logoColor=white)
+![Pint](https://img.shields.io/badge/Style-Pint%20PASS-success?style=flat)
 
-* **Integrantes:** Jhon Esteban Molina Echavarria · Heiber Lozano Mercado
+**VetPets ERP** es una aplicación web empresarial desarrollada en **Laravel 11+, MySQL 8.4 y Docker Sail**, diseñada para la administración comercial integral de tiendas de mascotas. El sistema integra el ciclo comercial completo: catálogo, inventario y control de lotes con fechas de vencimiento, módulo de tarifas comerciales con IVA diferencial (0 %, 5 % y 19 %), proveedores, órdenes de compra con recepción parcial o total, trazabilidad en **Kardex permanente**, facturación POS, documentos PDF, **API REST Sanctum v1**, **importación/exportación masiva en Excel**, **notificaciones multicanal (Mailpit + DB)**, **tareas programadas (Schedule)**, dashboard gerencial y un esquema de seguridad con **rol activo en sesión**.
+
+* **Integrantes:** Jhon Esteban Molina Echavarria (`esteban`) · Heiber Lozano Mercado (`heiber`)
 * **Asignatura:** Software de Gestión Empresarial (COTECNOVA - 2026)
 * **Docente:** Ing. Jhon James Cano Sánchez
-* **Etiqueta (Tag) de Entrega Oficial:** `avance-2`
+* **Entrega Oficial del Proyecto:** 25 de noviembre de 2026 (11:59 p. m.)
+* **Sustentación / Exposición:** 26 de noviembre de 2026
 * **Video de Sustentación:** [Ver Video en Google Drive](https://drive.google.com/drive/folders/154DKFAKOyDlauuwDyoacq1mFkrTdBTYA?usp=sharing)
 * **Documento del Avance (Segundo Corte):** [Avance2_VetPets_Molina_Lozano.md](docs/avance2/Avance2_VetPets_Molina_Lozano.md)
 
@@ -27,49 +35,105 @@ El repositorio mantiene la trazabilidad histórica de los avances y clases del s
 * **[Clase 10: Compras, Proveedores y Reportes PDF](docs/clase_10/README.md)**: Evidencias técnicas del módulo de abastecimiento, órdenes de compra, recepción parcial y generación de documentos en PDF.
 * **Clase 10.5 y Adicionales: Seguridad Avanzada, Rol Activo y Marca Blanca**: Matriz interactiva de permisos, Rol Activo en sesión, Identidad Corporativa y Gestión de Módulos.
 * **Avance 2: Separación de Inventario y Lotes vs. Tarifas e IVA Diferencial**: Control de lotes perecederos, semáforo de vencimiento y cálculo de IVA al 0 %, 5 % y 19 %.
+* **Clase 12: Kardex Permanente y Auditoría Forense**: Asentamiento automático de movimientos (`InventoryService`), trazabilidad de existencias valorizadas y bitácora con Visual Diffs.
+* **Clase 13: Interoperabilidad API REST Sanctum v1 y Excel v4**: Endpoints con autenticación por token Bearer, importación masiva con registro automático en Kardex y exportaciones estilizadas.
+* **Clase 14: Automatización de Procesos Comerciales**: Eventos de negocio post-commit (`SaleRegistered`, `PurchaseReceived`), notificaciones multicanal (Mailpit + DB con DomPDF adjunto), colas (`ShouldQueue`) y Schedule de resumen diario (`routes/console.php`).
+* **Clase 15: Calidad, CI/CD y Pruebas en Consola**: Pipeline de GitHub Actions en PHP 8.4 y MySQL 8.4, linter Laravel Pint (100% PASS), plantilla `.env.production.example` y pruebas con traza narrativa en consola.
+
+---
+
+## 🛠️ Prerrequisitos de Entorno & Mapeo de Puertos
+
+Antes de clonar el proyecto, asegurar que los siguientes puertos estén libres en el equipo anfitrión:
+
+| Servicio | Puerto Host | Puerto Contenedor | Propósito y Acceso |
+| :--- | :---: | :---: | :--- |
+| **Aplicación Web ERP** | **`8060`** | `80` | Interfaz web de usuario: **`http://localhost:8060`** |
+| **Buzón de Notificaciones (Mailpit)** | **`8025`** | `8025` | Webmail para revisar correos y PDFs adjuntos: **`http://localhost:8025`** |
+| **Servidor SMTP (Mailpit)** | **`1025`** | `1025` | Puerto de escucha SMTP para Laravel |
+| **Base de Datos MySQL 8.4** | **`3307`** | `3306` | Base de datos principal (mapeada a `3307` para evitar conflicto con MySQL local) |
+
+* **Requisitos del Sistema:** Docker Desktop (con integración WSL2 en Windows) o Docker Engine en Linux/macOS, y Git.
 
 ---
 
 ## 🚀 Despliegue e Inicialización Local (Docker Sail)
 
-Para levantar el proyecto desde cero en una máquina local:
+Instrucciones paso a paso para levantar el proyecto desde un clon totalmente limpio:
 
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/moliech/ERP_Veterinaria.git
 cd ERP_Veterinaria
 
-# 2. Configurar variables de entorno e instalar dependencias
+# 2. Configurar variables de entorno desde la plantilla oficial
 cp .env.example .env
+
+# 3. Instalar dependencias de PHP (Elegir Opción A o B):
+
+# Opción A (Si tienes Composer instalado en el Host):
 composer install
 
-# 3. Levantar contenedores Docker Sail (Web en puerto 8060, MySQL en 3307->3306)
+# Opción B (Si NO tienes PHP/Composer en el Host — Contenedor temporal oficial de Sail):
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php84-composer:latest \
+    composer install --ignore-platform-reqs
+
+# 4. Levantar los 3 contenedores de Sail (Web, MySQL 8.4 y Mailpit)
 ./vendor/bin/sail up -d
 
-# 4. Generar clave, ejecutar migraciones estructuradas y sembrado de datos iniciales
+# 5. Generar Application Key
 ./vendor/bin/sail artisan key:generate
+
+# 6. Ejecutar migraciones estructuradas y sembrado de datos con histórico de Kardex
 ./vendor/bin/sail artisan migrate --seed
 
-# 5. Compilar assets de frontend (Vite / Tailwind CSS)
+# 7. Compilar librerías y estilos de frontend (Vite & Tailwind CSS)
 ./vendor/bin/sail npm install
 ./vendor/bin/sail npm run build
 ```
 
-El sistema quedará disponible en: **`http://localhost:8060`**
+---
+
+## 🌐 URLs y Servicios Activos
+
+* 🖥️ **ERP Web (Login):** **`http://localhost:8060`**
+* 📬 **Buzón Web de Notificaciones y Correos (Mailpit):** **`http://localhost:8025`**
+* 🔌 **API REST v1 Base URL:** **`http://localhost:8060/api/v1`**
+
+---
+
+## 🧪 Comandos de Verificación Rápida y Demostración en Consola
+
+Comandos listos para ejecutar y verificar la salud, estilo y funcionamiento del sistema:
+
+```bash
+# 1. Verificar estándar de estilo y formato de código (Laravel Pint - 100% PASS)
+./vendor/bin/sail pint --test
+
+# 2. Ejecutar las 2 Pruebas con Recorrido Visible en Consola (Demostración de Compra/Kardex y Venta API)
+./vendor/bin/sail test tests/Feature/FlujoComercialKardexTest.php
+
+# 3. Ejecutar la suite completa de pruebas automatizadas (41 pruebas en verde)
+./vendor/bin/sail test
+
+# 4. Ejecutar el comando del resumen diario comercial y verificar llegada a Mailpit (puerto 8025)
+./vendor/bin/sail artisan erp:resumen-diario
+```
 
 ---
 
 ## 🔑 Credenciales y Usuarios de Prueba por Rol
 
-* **Servidor Local:** **`http://localhost:8060`**
-* **Página de Login:** **`http://localhost:8060/login`**
-
-| Usuario / Correo | Contraseña | Rol Asignado | Permisos y Propósito de Prueba |
+| Usuario / Correo | Contraseña | Rol Asignado | Permisos y Propósito de Demostración |
 | :--- | :--- | :---: | :--- |
-| **`admin@test.com`** | `password` | **Administrador (`admin`)** | Acceso total: Configuración global, catálogo, clientes, ventas, compras, anulación, matriz de permisos, identidad corporativa y gestión de módulos. |
-| **`almacenista@test.com`** | `password` | **Almacenista (`almacenista`)** | Gestión de bodega: categorías, inventario y lotes, proveedores y recepción de órdenes de compra. Sin acceso a ventas POS. |
-| **`vendedor@test.com`** | `password` | **Vendedor (`vendedor`)** | Operación de mostrador: consulta de productos, registro de clientes y emisión de ventas POS. Sin acceso a compras ni proveedores. |
-| **`supervisor@test.com`** | `password` | **Múltiples Roles (`supervisor`)** | **Demostración de Rol Activo:** Posee los roles `vendedor` y `almacenista`. Al iniciar sesión elige con cuál rol operar y puede conmutarlo desde el menú. Además, cuenta con el permiso directo `ver-reportes` para consultar el Dashboard en cualquier rol. |
+| **`admin@test.com`** | `password` | **Administrador (`admin`)** | Acceso total: Configuración global, catálogo, clientes, ventas, compras, anulación, matriz de permisos, identidad corporativa, gestión de módulos y reportes. |
+| **`almacenista@test.com`** | `password` | **Almacenista (`almacenista`)** | Gestión de bodega: categorías, inventario y lotes con semáforo de vencimiento, proveedores, recepción de órdenes de compra y Kardex permanente. Sin acceso a ventas POS (bloqueo 403). |
+| **`vendedor@test.com`** | `password` | **Vendedor (`vendedor`)** | Operación de mostrador: consulta de catálogo, registro de clientes y facturación POS con liquidación de IVA. Sin acceso a compras ni configuración (bloqueo 403). |
+| **`supervisor@test.com`** | `password` | **Múltiples Roles (`supervisor`)** | **Demostración de Rol Activo:** Posee los roles `vendedor` y `almacenista`. Al iniciar sesión elige con cuál rol operar y puede conmutarlo desde la barra superior. Además, cuenta con el permiso directo `ver-reportes` para consultar el Dashboard en cualquier rol. |
 
 ---
 
@@ -89,6 +153,12 @@ El sistema quedará disponible en: **`http://localhost:8060`**
 | **Seguridad** | `roles`, `permissions` | Spatie + `SecurityPolicyService` | 🛡️ Rol Activo | Matriz interactiva de permisos, asignación de rol activo en sesión y protección contra auto-desactivación del admin. |
 | **Identidad Corporativa**| `company_settings` | `CompanySettingController` | 🎨 Marca Blanca | Configuración de razón social, NIT, color institucional reactivo, ícono y pie de factura. |
 | **Gestión de Módulos**| `system_modules` | `SystemModuleController` | 🔌 Modularidad | Activación y desactivación dinámica de módulos con validación de dependencias. |
+| **Kardex Permanente** | `inventory_movements` | `InventoryController` / `InventoryService` | 📈 Trazabilidad Valorizada | Movimientos automáticos (compras, ventas, anulaciones, ajustes) con saldo en unidades y exportación en PDF. |
+| **Auditoría Forense** | `activity_log` | `AuditController` / Spatie Activitylog | 🔍 Visual Diffs | Registro forense inmutable de eventos críticos con comparación visual de cambios (antes vs. después). |
+| **API REST v1** | Rutas `/api/v1` | `Api/AuthController`, `ProductController`, `SaleController` | 🔐 Sanctum Bearer | Endpoints seguros para login con selección de rol activo, catálogo en JSON y ventas transaccionales. |
+| **Interoperabilidad Excel** | Clases `Exports/` & `Imports/` | `ExcelController` / Maatwebsite v4 | 📊 Excel Corporativo | Exportación de productos y ventas con estilos corporativos e importación masiva con registro automático en Kardex. |
+| **Automatización** | `notifications` | `NotificationController` / `SendDailySummary` | 🔔 Multicanal & Schedule | Eventos post-commit, despacho a colas (`ShouldQueue`), avisos a Mailpit con PDF adjunto, tarea diaria a las 19:00 y campana en UI. |
+| **Calidad y CI/CD** | `.github/workflows/` | GitHub Actions + Laravel Pint | 🚀 Integración Continua | Pipeline automatizado en la nube con PHP 8.4, MySQL 8.4, linter Pint (100% PASS) y 41 pruebas automatizadas. |
 
 ---
 

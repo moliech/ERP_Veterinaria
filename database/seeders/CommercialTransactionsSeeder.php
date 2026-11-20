@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\InventoryMovement;
 use App\Models\Owner;
 use App\Models\Product;
 use App\Models\Provider;
@@ -17,124 +18,322 @@ class CommercialTransactionsSeeder extends Seeder
     public function run(): void
     {
         $admin = User::where('email', 'admin@test.com')->first() ?? User::first();
-        $provider1 = Provider::first();
-        $provider2 = Provider::skip(1)->first() ?? $provider1;
-        $client1 = Owner::first();
-        $client2 = Owner::skip(1)->first() ?? $client1;
+        $vendedor = User::where('email', 'vendedor@test.com')->first() ?? $admin;
+        $almacenista = User::where('email', 'almacenista@test.com')->first() ?? $admin;
 
-        if (! $admin || ! $provider1 || ! $client1 || Product::count() < 5) {
+        $providers = Provider::all();
+        $clients = Owner::all();
+        $products = Product::all()->keyBy('barcode');
+
+        if ($providers->isEmpty() || $clients->isEmpty() || $products->count() < 10) {
             return;
         }
 
-        $p1 = Product::where('barcode', '770001')->first() ?? Product::first();
-        $p2 = Product::where('barcode', '770002')->first() ?? Product::skip(1)->first();
-        $p3 = Product::where('barcode', '770003')->first() ?? Product::skip(2)->first();
-        $p4 = Product::where('barcode', '770005')->first() ?? Product::skip(3)->first();
-        $p5 = Product::where('barcode', '770008')->first() ?? Product::skip(4)->first();
+        $prov1 = $providers->first();
+        $prov2 = $providers->skip(1)->first() ?? $prov1;
+        $prov3 = $providers->skip(2)->first() ?? $prov1;
 
-        // 1. Orden de Compra Recibida
-        if (! Purchase::withTrashed()->where('purchase_number', 'OC-0001')->exists()) {
-            $sub1 = (10 * 165000) + (12 * 85000);
-            $tax1 = round($sub1 * 0.19, 2);
-            $oc1 = Purchase::create([
-                'purchase_number' => 'OC-0001',
-                'provider_id' => $provider1->id,
-                'user_id' => $admin->id,
-                'purchase_date' => now()->subDays(5),
+        // =====================================================================
+        // FASE 1: INICIALIZACIÓN DE KARDEX (SALDO INICIAL 30 DÍAS ATRÁS)
+        // =====================================================================
+        foreach ($products as $p) {
+            if (! InventoryMovement::where('product_id', $p->id)->where('concept', 'inventario_inicial')->exists()) {
+                InventoryMovement::create([
+                    'product_id' => $p->id,
+                    'type' => 'entrada',
+                    'concept' => 'inventario_inicial',
+                    'quantity' => $p->current_stock,
+                    'balance' => $p->current_stock,
+                    'unit_cost' => $p->cost_price,
+                    'user_id' => $admin->id,
+                    'notes' => 'Inventario inicial de apertura de tienda',
+                    'created_at' => now()->subDays(30),
+                    'updated_at' => now()->subDays(30),
+                ]);
+            }
+        }
+
+        // =====================================================================
+        // FASE 2: ÓRDENES DE COMPRA HISTÓRICAS Y ACTIVAS (8 ÓRDENES)
+        // =====================================================================
+        $comprasData = [
+            [
+                'number' => 'OC-0001',
+                'provider' => $prov1,
+                'days' => 25,
                 'status' => 'recibida',
-                'subtotal' => $sub1,
-                'tax' => $tax1,
-                'total' => $sub1 + $tax1,
-                'received_at' => now()->subDays(4),
-                'notes' => 'Abastecimiento mensual de línea de nutrición canina premium.',
-            ]);
-            PurchaseDetail::create([
-                'purchase_id' => $oc1->id,
-                'product_id' => $p1->id,
-                'quantity' => 10,
-                'received_quantity' => 10,
-                'unit_cost' => 165000,
-                'subtotal' => 1650000,
-            ]);
-            PurchaseDetail::create([
-                'purchase_id' => $oc1->id,
-                'product_id' => $p2->id,
-                'quantity' => 12,
-                'received_quantity' => 12,
-                'unit_cost' => 85000,
-                'subtotal' => 1020000,
-            ]);
-        }
-
-        // 2. Orden de Compra con Recepción Parcial
-        if (! Purchase::withTrashed()->where('purchase_number', 'OC-0002')->exists()) {
-            $sub2 = (15 * 62000) + (20 * 12000);
-            $tax2 = round($sub2 * 0.19, 2);
-            $oc2 = Purchase::create([
-                'purchase_number' => 'OC-0002',
-                'provider_id' => $provider2->id,
-                'user_id' => $admin->id,
-                'purchase_date' => now()->subDays(2),
+                'notes' => 'Abastecimiento de alimento canino premium.',
+                'items' => [
+                    ['barcode' => '770001', 'qty' => 10, 'rec' => 10, 'cost' => 185000],
+                    ['barcode' => '770002', 'qty' => 12, 'rec' => 12, 'cost' => 96000],
+                ],
+            ],
+            [
+                'number' => 'OC-0002',
+                'provider' => $prov2,
+                'days' => 20,
                 'status' => 'parcial',
-                'subtotal' => $sub2,
-                'tax' => $tax2,
-                'total' => $sub2 + $tax2,
-                'notes' => 'Entrega parcial recibida en bodega; pendiente saldo de unidades.',
+                'notes' => 'Entrega parcial en bodega; pendiente despacho de snack.',
+                'items' => [
+                    ['barcode' => '770003', 'qty' => 15, 'rec' => 8, 'cost' => 72000],
+                    ['barcode' => '770005', 'qty' => 20, 'rec' => 20, 'cost' => 14500],
+                ],
+            ],
+            [
+                'number' => 'OC-0003',
+                'provider' => $prov3,
+                'days' => 16,
+                'status' => 'recibida',
+                'notes' => 'Línea de accesorios y camas ortopédicas.',
+                'items' => [
+                    ['barcode' => '770006', 'qty' => 8, 'rec' => 8, 'cost' => 36000],
+                    ['barcode' => '770007', 'qty' => 5, 'rec' => 5, 'cost' => 95000],
+                ],
+            ],
+            [
+                'number' => 'OC-0004',
+                'provider' => $prov1,
+                'days' => 12,
+                'status' => 'recibida',
+                'notes' => 'Reposición de juguetes Kong y dermocosméticos.',
+                'items' => [
+                    ['barcode' => '770008', 'qty' => 12, 'rec' => 12, 'cost' => 31000],
+                    ['barcode' => '770009', 'qty' => 10, 'rec' => 10, 'cost' => 22000],
+                ],
+            ],
+            [
+                'number' => 'OC-0005',
+                'provider' => $prov2,
+                'days' => 8,
+                'status' => 'recibida',
+                'notes' => 'Antiparasitarios NexGard y arena aglomerante.',
+                'items' => [
+                    ['barcode' => '770010', 'qty' => 15, 'rec' => 15, 'cost' => 54000],
+                    ['barcode' => '770011', 'qty' => 14, 'rec' => 14, 'cost' => 28000],
+                ],
+            ],
+            [
+                'number' => 'OC-0006',
+                'provider' => $prov3,
+                'days' => 5,
+                'status' => 'parcial',
+                'notes' => 'Bebederos automáticos - Despacho parcial recibido.',
+                'items' => [
+                    ['barcode' => '770012', 'qty' => 8, 'rec' => 4, 'cost' => 74000],
+                ],
+            ],
+            [
+                'number' => 'OC-0007',
+                'provider' => $prov1,
+                'days' => 2,
+                'status' => 'pendiente',
+                'notes' => 'Orden pendiente de arribo: Royal Canin Instinctive para reabastecimiento crítico.',
+                'items' => [
+                    ['barcode' => '770004', 'qty' => 20, 'rec' => 0, 'cost' => 62000],
+                ],
+            ],
+            [
+                'number' => 'OC-0008',
+                'provider' => $prov2,
+                'days' => 1,
+                'status' => 'anulada',
+                'notes' => 'Orden anulada por retraso del distribuidor. Cero mercancía recibida.',
+                'items' => [
+                    ['barcode' => '770001', 'qty' => 5, 'rec' => 0, 'cost' => 185000],
+                ],
+            ],
+        ];
+
+        foreach ($comprasData as $data) {
+            if (Purchase::withTrashed()->where('purchase_number', $data['number'])->exists()) {
+                continue;
+            }
+
+            $subtotal = 0;
+            foreach ($data['items'] as $item) {
+                $subtotal += ($item['qty'] * $item['cost']);
+            }
+            $tax = round($subtotal * 0.19, 2);
+            $total = $subtotal + $tax;
+
+            $date = now()->subDays($data['days']);
+
+            $purchase = Purchase::create([
+                'purchase_number' => $data['number'],
+                'provider_id' => $data['provider']->id,
+                'user_id' => $almacenista->id,
+                'purchase_date' => $date->toDateString(),
+                'status' => $data['status'],
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total,
+                'received_at' => in_array($data['status'], ['recibida', 'parcial']) ? $date->addHours(4) : null,
+                'notes' => $data['notes'],
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
-            PurchaseDetail::create([
-                'purchase_id' => $oc2->id,
-                'product_id' => $p3->id,
-                'quantity' => 15,
-                'received_quantity' => 8,
-                'unit_cost' => 62000,
-                'subtotal' => 930000,
-            ]);
-            PurchaseDetail::create([
-                'purchase_id' => $oc2->id,
-                'product_id' => $p4->id,
-                'quantity' => 20,
-                'received_quantity' => 20,
-                'unit_cost' => 12000,
-                'subtotal' => 240000,
-            ]);
+
+            if ($data['status'] === 'anulada') {
+                $purchase->delete(); // Soft delete
+            }
+
+            foreach ($data['items'] as $item) {
+                $prod = $products[$item['barcode']] ?? null;
+                if (! $prod) {
+                    continue;
+                }
+
+                $detailSub = $item['qty'] * $item['cost'];
+                PurchaseDetail::create([
+                    'purchase_id' => $purchase->id,
+                    'product_id' => $prod->id,
+                    'quantity' => $item['qty'],
+                    'received_quantity' => $item['rec'],
+                    'unit_cost' => $item['cost'],
+                    'subtotal' => $detailSub,
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ]);
+
+                // Asentar en Kardex si hubo mercancía físicamente recibida
+                if ($item['rec'] > 0) {
+                    $prod->refresh();
+                    $newBalance = $prod->current_stock + $item['rec'];
+                    $prod->update(['current_stock' => $newBalance, 'cost_price' => $item['cost']]);
+
+                    InventoryMovement::create([
+                        'product_id' => $prod->id,
+                        'type' => 'entrada',
+                        'concept' => 'compra',
+                        'quantity' => $item['rec'],
+                        'balance' => $newBalance,
+                        'unit_cost' => $item['cost'],
+                        'reference_type' => Purchase::class,
+                        'reference_id' => $purchase->id,
+                        'user_id' => $almacenista->id,
+                        'notes' => "Recepción física de orden {$purchase->purchase_number}",
+                        'created_at' => $date->addHours(4),
+                        'updated_at' => $date->addHours(4),
+                    ]);
+                }
+            }
         }
 
-        // 3. Ventas POS del mes (para poblar KPIs y Top 5 Productos)
-        if (! Sale::withTrashed()->where('invoice_number', 'FAC-0001')->exists()) {
-            $sSub1 = (2 * (float) $p1->sale_price) + (4 * (float) $p4->sale_price) + (2 * (float) $p5->sale_price);
-            $sTax1 = round($sSub1 * 0.19, 2);
-            $sale1 = Sale::create([
-                'invoice_number' => 'FAC-0001',
-                'client_id' => $client1->id,
-                'user_id' => $admin->id,
-                'sale_date' => now()->subDays(3),
-                'subtotal' => $sSub1,
-                'tax' => $sTax1,
-                'total' => $sSub1 + $sTax1,
-                'status' => 'pagada',
-                'notes' => 'Venta mostrador POS - pago con tarjeta débito.',
-            ]);
-            SaleDetail::create(['sale_id' => $sale1->id, 'product_id' => $p1->id, 'quantity' => 2, 'unit_price' => $p1->sale_price, 'subtotal' => 2 * $p1->sale_price]);
-            SaleDetail::create(['sale_id' => $sale1->id, 'product_id' => $p4->id, 'quantity' => 4, 'unit_price' => $p4->sale_price, 'subtotal' => 4 * $p4->sale_price]);
-            SaleDetail::create(['sale_id' => $sale1->id, 'product_id' => $p5->id, 'quantity' => 2, 'unit_price' => $p5->sale_price, 'subtotal' => 2 * $p5->sale_price]);
-        }
+        // =====================================================================
+        // FASE 3: VENTAS POS HISTÓRICAS EN MOSTRADOR (20 FACTURAS)
+        // =====================================================================
+        $ventasConfig = [
+            ['days' => 24, 'items' => [['770001', 1], ['770005', 2]], 'pay' => 'efectivo', 'notes' => 'Cliente mostrador habitual.'],
+            ['days' => 23, 'items' => [['770002', 1], ['770006', 1]], 'pay' => 'tarjeta', 'notes' => 'Pago POS con tarjeta débito.'],
+            ['days' => 21, 'items' => [['770003', 2], ['770008', 1]], 'pay' => 'transferencia', 'notes' => 'Transferencia bancaria Nequi.'],
+            ['days' => 20, 'items' => [['770010', 1], ['770011', 1]], 'pay' => 'efectivo', 'notes' => 'Antiparasitario y arena.'],
+            ['days' => 19, 'items' => [['770005', 3], ['770009', 1]], 'pay' => 'tarjeta', 'notes' => 'Snacks y champú canino.'],
+            ['days' => 18, 'items' => [['770001', 1], ['770008', 2]], 'pay' => 'efectivo', 'notes' => 'Alimento Taste y 2 Kongs.'],
+            ['days' => 17, 'items' => [['770002', 2], ['770005', 2]], 'pay' => 'tarjeta', 'notes' => 'Bultos Chunky raza mediana.'],
+            ['days' => 15, 'items' => [['770003', 1], ['770012', 1]], 'pay' => 'transferencia', 'notes' => 'Bebedero automático y alimento gato.'],
+            ['days' => 14, 'items' => [['770006', 2], ['770008', 1]], 'pay' => 'efectivo', 'notes' => 'Arnés reflectivo y juguete.'],
+            ['days' => 13, 'items' => [['770007', 1], ['770009', 1]], 'pay' => 'tarjeta', 'notes' => 'Cama ortopédica XL y champú.'],
+            ['days' => 11, 'items' => [['770010', 2], ['770005', 4]], 'pay' => 'efectivo', 'notes' => 'NexGard Spectra y snacks de hígado.'],
+            ['days' => 10, 'items' => [['770001', 1], ['770011', 2]], 'pay' => 'tarjeta', 'notes' => 'Alimento y arena sanitaria.'],
+            ['days' => 9, 'items' => [['770002', 1], ['770004', 1]], 'pay' => 'efectivo', 'notes' => 'Chunky y sobre Royal Canin.'],
+            ['days' => 8, 'items' => [['770003', 1], ['770008', 1]], 'pay' => 'tarjeta', 'notes' => 'Pro Plan y juguete Kong.'],
+            ['days' => 6, 'items' => [['770005', 2], ['770006', 1]], 'pay' => 'efectivo', 'notes' => 'Snacks y arnés talla L.'],
+            ['days' => 5, 'items' => [['770010', 1], ['770009', 1]], 'pay' => 'transferencia', 'notes' => 'NexGard y champú avena.'],
+            ['days' => 4, 'items' => [['770001', 1], ['770002', 1]], 'pay' => 'tarjeta', 'notes' => 'Combo bultos caninos.'],
+            ['days' => 3, 'items' => [['770007', 1], ['770011', 1]], 'pay' => 'efectivo', 'notes' => 'Cama y arena sanitaria.'],
+            ['days' => 2, 'items' => [['770003', 1], ['770005', 2]], 'pay' => 'tarjeta', 'notes' => 'Venta mostrador fin de semana.'],
+            ['days' => 1, 'items' => [['770008', 1], ['770010', 1]], 'pay' => 'efectivo', 'notes' => 'Venta rápida POS tarde.'],
+        ];
 
-        if (! Sale::withTrashed()->where('invoice_number', 'FAC-0002')->exists()) {
-            $sSub2 = (3 * (float) $p2->sale_price) + (3 * (float) $p3->sale_price);
-            $sTax2 = round($sSub2 * 0.19, 2);
-            $sale2 = Sale::create([
-                'invoice_number' => 'FAC-0002',
-                'client_id' => $client2->id,
-                'user_id' => $admin->id,
-                'sale_date' => now()->subDay(),
-                'subtotal' => $sSub2,
-                'tax' => $sTax2,
-                'total' => $sSub2 + $sTax2,
+        $invoiceNum = 1;
+        foreach ($ventasConfig as $cfg) {
+            $formattedNum = 'FAC-'.str_pad($invoiceNum, 5, '0', STR_PAD_LEFT);
+            $invoiceNum++;
+
+            if (Sale::withTrashed()->where('invoice_number', $formattedNum)->exists()) {
+                continue;
+            }
+
+            $date = now()->subDays($cfg['days'])->setTime(11 + ($invoiceNum % 6), 15 * ($invoiceNum % 4));
+            $client = $clients->random();
+
+            $subtotal = 0;
+            $tax = 0;
+            $saleLines = [];
+
+            foreach ($cfg['items'] as $item) {
+                $prod = $products[$item[0]] ?? null;
+                if (! $prod || $prod->current_stock < $item[1]) {
+                    continue;
+                }
+
+                $lineSub = (float) $prod->sale_price * $item[1];
+                $taxRate = (float) ($prod->tax_rate ?? 19.00);
+                $lineTax = round($lineSub * ($taxRate / 100), 2);
+
+                $subtotal += $lineSub;
+                $tax += $lineTax;
+
+                $saleLines[] = [
+                    'product' => $prod,
+                    'quantity' => $item[1],
+                    'unit_price' => $prod->sale_price,
+                    'subtotal' => $lineSub,
+                ];
+            }
+
+            if (empty($saleLines)) {
+                continue;
+            }
+
+            $total = $subtotal + $tax;
+
+            $sale = Sale::create([
+                'invoice_number' => $formattedNum,
+                'client_id' => $client->id,
+                'user_id' => $vendedor->id,
+                'sale_date' => $date->toDateString(),
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total,
                 'status' => 'pagada',
-                'notes' => 'Venta POS cliente frecuente.',
+                'notes' => $cfg['notes'],
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
-            SaleDetail::create(['sale_id' => $sale2->id, 'product_id' => $p2->id, 'quantity' => 3, 'unit_price' => $p2->sale_price, 'subtotal' => 3 * $p2->sale_price]);
-            SaleDetail::create(['sale_id' => $sale2->id, 'product_id' => $p3->id, 'quantity' => 3, 'unit_price' => $p3->sale_price, 'subtotal' => 3 * $p3->sale_price]);
+
+            foreach ($saleLines as $line) {
+                $prod = $line['product'];
+                SaleDetail::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $prod->id,
+                    'quantity' => $line['quantity'],
+                    'unit_price' => $line['unit_price'],
+                    'subtotal' => $line['subtotal'],
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ]);
+
+                // Descontar inventario y asentar en Kardex
+                $prod->refresh();
+                $newBalance = max(0, $prod->current_stock - $line['quantity']);
+                $prod->update(['current_stock' => $newBalance]);
+
+                InventoryMovement::create([
+                    'product_id' => $prod->id,
+                    'type' => 'salida',
+                    'concept' => 'venta',
+                    'quantity' => $line['quantity'],
+                    'balance' => $newBalance,
+                    'unit_cost' => $prod->cost_price,
+                    'reference_type' => Sale::class,
+                    'reference_id' => $sale->id,
+                    'user_id' => $vendedor->id,
+                    'notes' => "Venta POS {$sale->invoice_number} en mostrador",
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ]);
+            }
         }
     }
 }
