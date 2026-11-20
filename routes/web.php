@@ -122,6 +122,15 @@ Route::middleware('auth')->group(function () {
         });
     }
 
+    // Centro de Notificaciones y Alertas (Clase 14)
+    if (class_exists(\App\Http\Controllers\NotificationController::class)) {
+        Route::controller(\App\Http\Controllers\NotificationController::class)->group(function () {
+            Route::get('notificaciones', 'index')->name('notifications.index');
+            Route::patch('notificaciones/{id}', 'read')->name('notifications.read');
+            Route::post('notificaciones/leer-todas', 'readAll')->name('notifications.read-all');
+        });
+    }
+
     // Configuración: seguridad, identidad corporativa y gestión de módulos
     Route::prefix('configuracion')->name('settings.')->group(function () {
         Route::get('/', SettingsController::class)->name('index');

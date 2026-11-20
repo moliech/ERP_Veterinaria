@@ -268,6 +268,20 @@
                     </div>
 
                     <div class="flex items-center space-x-3">
+                        @auth
+                            @php($unreadCount = Auth::user()->unreadNotifications()->count())
+                            <a href="{{ route('notifications.index') }}" 
+                               class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition flex items-center" 
+                               title="Notificaciones del Sistema">
+                                <i class="fa-regular fa-bell text-lg"></i>
+                                @if ($unreadCount > 0)
+                                    <span class="absolute top-1 right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white shadow-xs">
+                                        {{ $unreadCount > 9 ? '+9' : $unreadCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        @endauth
+
                         @if ($activeRoleObj)
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
                                 <i class="fa-solid fa-user-check mr-1.5 text-slate-500"></i>
