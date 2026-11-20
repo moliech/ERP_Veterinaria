@@ -27,8 +27,8 @@ class ImportProductsRequest extends FormRequest
     {
         return [
             'file.required' => 'Debe seleccionar un archivo para importar.',
-            'file.mimes'    => 'El archivo debe estar en formato Excel (.xlsx, .xls) o CSV (.csv).',
-            'file.max'      => 'El archivo no debe exceder los 5 MB de tamaño.',
+            'file.mimes' => 'El archivo debe estar en formato Excel (.xlsx, .xls) o CSV (.csv).',
+            'file.max' => 'El archivo no debe exceder los 5 MB de tamaño.',
         ];
     }
 }

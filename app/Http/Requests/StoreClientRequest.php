@@ -21,12 +21,12 @@ class StoreClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document_type'   => ['required', Rule::in(['CC', 'NIT', 'CE', 'PP'])],
+            'document_type' => ['required', Rule::in(['CC', 'NIT', 'CE', 'PP'])],
             'document_number' => ['required', 'string', 'max:20', 'unique:owners,document_number'],
-            'first_name'      => ['required', 'string', 'max:50'],
-            'last_name'       => ['required', 'string', 'max:50'],
-            'email'           => ['nullable', 'email', 'max:100'],
-            'address'         => ['nullable', 'string', 'max:150'],
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['required', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:100'],
+            'address' => ['nullable', 'string', 'max:150'],
         ];
     }
 
@@ -36,12 +36,12 @@ class StoreClientRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'document_type'   => 'tipo de documento',
+            'document_type' => 'tipo de documento',
             'document_number' => 'número de documento',
-            'first_name'      => 'nombres',
-            'last_name'       => 'apellidos',
-            'email'           => 'correo electrónico',
-            'address'         => 'dirección',
+            'first_name' => 'nombres',
+            'last_name' => 'apellidos',
+            'email' => 'correo electrónico',
+            'address' => 'dirección',
         ];
     }
 }

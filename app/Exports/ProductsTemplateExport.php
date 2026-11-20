@@ -3,12 +3,13 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ProductsTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
+class ProductsTemplateExport implements FromArray, ShouldAutoSize, WithHeadings, WithStyles
 {
     public function array(): array
     {
@@ -22,8 +23,8 @@ class ProductsTemplateExport implements FromArray, WithHeadings, WithStyles, Sho
                 '10',
                 '3',
                 'L-2026-01',
-                '2027-12-31'
-            ]
+                '2027-12-31',
+            ],
         ];
     }
 
@@ -38,7 +39,7 @@ class ProductsTemplateExport implements FromArray, WithHeadings, WithStyles, Sho
             'stock_inicial',
             'stock_minimo',
             'lote',
-            'fecha_vencimiento'
+            'fecha_vencimiento',
         ];
     }
 
@@ -48,8 +49,8 @@ class ProductsTemplateExport implements FromArray, WithHeadings, WithStyles, Sho
             1 => [
                 'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FF1E293B'] // Slate 800
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FF1E293B'], // Slate 800
                 ],
             ],
         ];

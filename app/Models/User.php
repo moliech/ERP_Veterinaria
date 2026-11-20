@@ -58,6 +58,7 @@ class User extends Authenticatable
             foreach ($this->currentAccessToken()->abilities as $ability) {
                 if (str_starts_with($ability, 'rol:')) {
                     $roleName = substr($ability, 4);
+
                     return $this->roles->firstWhere('name', $roleName);
                 }
             }

@@ -53,12 +53,12 @@ class StoreSaleRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'client_id'          => 'cliente',
-            'sale_date'          => 'fecha de venta',
-            'notes'              => 'notas',
-            'items'              => 'productos',
+            'client_id' => 'cliente',
+            'sale_date' => 'fecha de venta',
+            'notes' => 'notas',
+            'items' => 'productos',
             'items.*.product_id' => 'producto',
-            'items.*.quantity'   => 'cantidad',
+            'items.*.quantity' => 'cantidad',
         ];
     }
 
@@ -69,7 +69,7 @@ class StoreSaleRequest extends FormRequest
     {
         return [
             'items.required' => 'Debe agregar al menos un producto a la venta.',
-            'items.min'      => 'Debe agregar al menos un producto a la venta.',
+            'items.min' => 'Debe agregar al menos un producto a la venta.',
         ];
     }
 }

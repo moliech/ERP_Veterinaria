@@ -15,7 +15,6 @@ use App\Notifications\DailySummaryNotification;
 use App\Notifications\LowStockNotification;
 use App\Notifications\PurchaseReceivedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -26,6 +25,7 @@ class Clase14Test extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $buyer;
 
     protected function setUp(): void
@@ -43,13 +43,13 @@ class Clase14Test extends TestCase
         $buyerRole->givePermissionTo([$permCompras]);
 
         $this->admin = User::factory()->create([
-            'email'  => 'admin@vetpets.test',
+            'email' => 'admin@vetpets.test',
             'active' => true,
         ]);
         $this->admin->assignRole('administrador');
 
         $this->buyer = User::factory()->create([
-            'email'  => 'comprador@vetpets.test',
+            'email' => 'comprador@vetpets.test',
             'active' => true,
         ]);
         $this->buyer->assignRole('comprador');
@@ -61,39 +61,39 @@ class Clase14Test extends TestCase
 
         $category = Category::create(['name' => 'Alimentos']);
         $product = Product::create([
-            'name'          => 'Concentrado Premium Perros',
-            'category_id'   => $category->id,
-            'cost_price'    => 50000,
-            'sale_price'    => 80000,
+            'name' => 'Concentrado Premium Perros',
+            'category_id' => $category->id,
+            'cost_price' => 50000,
+            'sale_price' => 80000,
             'current_stock' => 4, // Ya quedó en 4 (umbral es 5)
-            'min_stock'     => 5,
-            'active'        => true,
+            'min_stock' => 5,
+            'active' => true,
         ]);
 
         $owner = Owner::create([
-            'first_name'      => 'Carlos',
-            'last_name'       => 'Gomez',
-            'document_type'   => 'CC',
+            'first_name' => 'Carlos',
+            'last_name' => 'Gomez',
+            'document_type' => 'CC',
             'document_number' => '12345678',
-            'email'           => 'carlos@test.com',
+            'email' => 'carlos@test.com',
         ]);
 
         $sale = Sale::create([
             'invoice_number' => 'FAC-TEST-001',
-            'client_id'      => $owner->id,
-            'user_id'        => $this->admin->id,
-            'sale_date'      => now()->toDateString(),
-            'subtotal'       => 80000,
-            'tax'            => 15200,
-            'total'          => 95200,
-            'status'         => 'pagada',
+            'client_id' => $owner->id,
+            'user_id' => $this->admin->id,
+            'sale_date' => now()->toDateString(),
+            'subtotal' => 80000,
+            'tax' => 15200,
+            'total' => 95200,
+            'status' => 'pagada',
         ]);
 
         $sale->details()->create([
             'product_id' => $product->id,
-            'quantity'   => 3, // Antes estaba en 4 + 3 = 7 (> umbral 5)
+            'quantity' => 3, // Antes estaba en 4 + 3 = 7 (> umbral 5)
             'unit_price' => 80000,
-            'subtotal'   => 240000,
+            'subtotal' => 240000,
         ]);
 
         // Disparar evento
@@ -114,20 +114,20 @@ class Clase14Test extends TestCase
         Notification::fake();
 
         $provider = Provider::create([
-            'nit'          => '900111222-1',
+            'nit' => '900111222-1',
             'company_name' => 'Distribuidora Animal S.A.S',
-            'email'        => 'ventas@distribuidora.test',
+            'email' => 'ventas@distribuidora.test',
         ]);
 
         $purchase = Purchase::create([
             'purchase_number' => 'OC-2026-001',
-            'provider_id'     => $provider->id,
-            'user_id'         => $this->admin->id,
-            'purchase_date'   => now()->toDateString(),
-            'status'          => 'recibida',
-            'subtotal'        => 500000,
-            'tax'             => 95000,
-            'total'           => 595000,
+            'provider_id' => $provider->id,
+            'user_id' => $this->admin->id,
+            'purchase_date' => now()->toDateString(),
+            'status' => 'recibida',
+            'subtotal' => 500000,
+            'tax' => 95000,
+            'total' => 595000,
         ]);
 
         event(new PurchaseReceived($purchase, true));
@@ -160,13 +160,13 @@ class Clase14Test extends TestCase
 
         $category = Category::create(['name' => 'Fármacos']);
         $product = Product::create([
-            'name'          => 'Antiparasitario Canino',
-            'category_id'   => $category->id,
-            'cost_price'    => 10000,
-            'sale_price'    => 20000,
+            'name' => 'Antiparasitario Canino',
+            'category_id' => $category->id,
+            'cost_price' => 10000,
+            'sale_price' => 20000,
             'current_stock' => 2,
-            'min_stock'     => 5,
-            'active'        => true,
+            'min_stock' => 5,
+            'active' => true,
         ]);
 
         // Crear una notificación en base de datos para el admin

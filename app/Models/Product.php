@@ -117,7 +117,7 @@ class Product extends Model
 
         if ($daysLeft <= 60) {
             return [
-                'label' => 'Próximo a vencer (' . $daysLeft . 'd)',
+                'label' => 'Próximo a vencer ('.$daysLeft.'d)',
                 'badge' => 'bg-amber-100 text-amber-800 border-amber-300',
             ];
         }

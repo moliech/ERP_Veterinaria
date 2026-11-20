@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 class InitializeKardex extends Command
 {
     protected $signature = 'kardex:inicializar';
+
     protected $description = 'Registra el stock actual como inventario inicial para productos sin movimientos en el Kardex';
 
     public function handle(InventoryService $inventory): int
@@ -22,6 +23,7 @@ class InitializeKardex extends Command
             });
 
         $this->info("Productos inicializados en el Kardex: {$count}");
+
         return self::SUCCESS;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Provider;
 use App\Http\Requests\StoreProviderRequest;
 use App\Http\Requests\UpdateProviderRequest;
+use App\Models\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -25,10 +25,10 @@ class ProviderController extends Controller implements HasMiddleware
     {
         $providers = Provider::query()
             ->when($request->filled('search'), function ($q) use ($request) {
-                $term = '%' . $request->input('search') . '%';
+                $term = '%'.$request->input('search').'%';
                 $q->where('company_name', 'like', $term)
-                  ->orWhere('nit', 'like', $term)
-                  ->orWhere('contact_person', 'like', $term);
+                    ->orWhere('nit', 'like', $term)
+                    ->orWhere('contact_person', 'like', $term);
             })
             ->withCount('purchases')
             ->orderBy('company_name')
@@ -46,6 +46,7 @@ class ProviderController extends Controller implements HasMiddleware
     public function store(StoreProviderRequest $request)
     {
         Provider::create($request->validated());
+
         return redirect()->route('providers.index')->with('success', 'Proveedor registrado exitosamente.');
     }
 
@@ -57,6 +58,7 @@ class ProviderController extends Controller implements HasMiddleware
     public function update(UpdateProviderRequest $request, Provider $provider)
     {
         $provider->update($request->validated());
+
         return redirect()->route('providers.index')->with('success', 'Proveedor actualizado correctamente.');
     }
 
@@ -68,6 +70,7 @@ class ProviderController extends Controller implements HasMiddleware
         }
 
         $provider->delete();
+
         return redirect()->route('providers.index')->with('success', 'Proveedor enviado a la papelera.');
     }
 }

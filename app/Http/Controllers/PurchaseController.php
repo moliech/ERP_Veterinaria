@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchase;
-use App\Models\Provider;
-use App\Models\Product;
-use App\Services\PurchaseService;
-use App\Http\Requests\StorePurchaseRequest;
 use App\Http\Requests\ReceivePurchaseRequest;
+use App\Http\Requests\StorePurchaseRequest;
+use App\Models\Product;
+use App\Models\Provider;
+use App\Models\Purchase;
+use App\Services\PurchaseService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -31,13 +31,13 @@ class PurchaseController extends Controller implements HasMiddleware
         $purchases = Purchase::withTrashed()
             ->with(['provider', 'user'])
             ->when($request->filled('search'), function ($q) use ($request) {
-                $term = '%' . $request->input('search') . '%';
+                $term = '%'.$request->input('search').'%';
                 $q->where(function ($q) use ($term) {
                     $q->where('purchase_number', 'like', $term)
-                      ->orWhereHas('provider', function ($q) use ($term) {
-                          $q->where('company_name', 'like', $term)
-                            ->orWhere('nit', 'like', $term);
-                      });
+                        ->orWhereHas('provider', function ($q) use ($term) {
+                            $q->where('company_name', 'like', $term)
+                                ->orWhere('nit', 'like', $term);
+                        });
                 });
             })
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status')))
@@ -120,6 +120,6 @@ class PurchaseController extends Controller implements HasMiddleware
 
         $pdf = Pdf::loadView('pdf.purchase', compact('purchase'));
 
-        return $pdf->stream('Orden_Compra_' . $purchase->purchase_number . '.pdf');
+        return $pdf->stream('Orden_Compra_'.$purchase->purchase_number.'.pdf');
     }
 }

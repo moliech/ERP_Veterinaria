@@ -107,7 +107,7 @@ class DashboardController extends Controller
             $stats->push([
                 'key' => 'balance',
                 'label' => 'Ventas − Compras del mes',
-                'value' => ($balance >= 0 ? '+' : '-') . '$' . number_format(abs($balance), 0, ',', '.'),
+                'value' => ($balance >= 0 ? '+' : '-').'$'.number_format(abs($balance), 0, ',', '.'),
                 'subtext' => $balance >= 0 ? 'Flujo de caja superavitario' : 'Inversión neta en mercancía',
                 'icon' => 'fa-solid fa-scale-balanced',
                 'color' => $balance >= 0 ? 'emerald' : 'indigo',
@@ -123,7 +123,7 @@ class DashboardController extends Controller
             $stats->push([
                 'key' => 'sales',
                 'label' => 'Ventas del mes',
-                'value' => '$' . number_format((float) $totalSales, 0, ',', '.'),
+                'value' => '$'.number_format((float) $totalSales, 0, ',', '.'),
                 'subtext' => 'Facturación POS acumulada',
                 'icon' => 'fa-solid fa-cash-register',
                 'color' => 'emerald',
@@ -139,7 +139,7 @@ class DashboardController extends Controller
             $stats->push([
                 'key' => 'purchases',
                 'label' => 'Compras del mes',
-                'value' => '$' . number_format((float) $totalPurchases, 0, ',', '.'),
+                'value' => '$'.number_format((float) $totalPurchases, 0, ',', '.'),
                 'subtext' => 'Abastecimiento a proveedores',
                 'icon' => 'fa-solid fa-cart-shopping',
                 'color' => 'amber',
@@ -164,8 +164,8 @@ class DashboardController extends Controller
                 ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
                 ->whereHas('sale', function ($q) {
                     $q->whereMonth('sale_date', now()->month)
-                      ->whereYear('sale_date', now()->year)
-                      ->where('status', '!=', 'anulada');
+                        ->whereYear('sale_date', now()->year)
+                        ->where('status', '!=', 'anulada');
                 })
                 ->with('product:id,name,sale_price,barcode')
                 ->groupBy('product_id')
@@ -180,7 +180,7 @@ class DashboardController extends Controller
             $lowStock = Product::where('active', true)
                 ->where(function ($q) {
                     $q->where('current_stock', '<=', 5)
-                      ->orWhereColumn('current_stock', '<=', 'minimum_stock');
+                        ->orWhereColumn('current_stock', '<=', 'minimum_stock');
                 })
                 ->with('category:id,name')
                 ->orderBy('current_stock')

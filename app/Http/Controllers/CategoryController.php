@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -26,7 +26,7 @@ class CategoryController extends Controller implements HasMiddleware
         $showTrashed = $request->boolean('trashed') && $request->user()->can('eliminar-categorias');
         $categories = Category::query()
             ->withCount('products')
-            ->when($showTrashed, fn($q) => $q->onlyTrashed())
+            ->when($showTrashed, fn ($q) => $q->onlyTrashed())
             ->latest()
             ->paginate(10);
 

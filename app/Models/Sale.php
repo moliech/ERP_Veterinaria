@@ -26,9 +26,9 @@ class Sale extends Model
     {
         return [
             'sale_date' => 'date',
-            'subtotal'  => 'decimal:2',
-            'tax'       => 'decimal:2',
-            'total'     => 'decimal:2',
+            'subtotal' => 'decimal:2',
+            'tax' => 'decimal:2',
+            'total' => 'decimal:2',
         ];
     }
 

@@ -66,7 +66,7 @@ class CompanySetting extends Model
                 $attributes = $record->attributesToArray();
             }
 
-            $instance = (new self())->forceFill($attributes);
+            $instance = (new self)->forceFill($attributes);
             $instance->exists = isset($attributes['id']);
 
             return $instance;

@@ -25,7 +25,8 @@ class PurchaseReceivedNotification extends Notification implements ShouldQueue
         $purchase = $this->purchase->load(['provider', 'user', 'details.product']);
 
         // Generar el PDF oficial de la orden de compra en memoria
-        $pdf = Pdf::loadView('purchases.pdf', ['purchase' => $purchase])
+        $pdfView = view()->exists('pdf.purchase') ? 'pdf.purchase' : 'purchases.pdf';
+        $pdf = Pdf::loadView($pdfView, ['purchase' => $purchase])
             ->setPaper('letter')
             ->output();
 
@@ -44,10 +45,11 @@ class PurchaseReceivedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         $number = $this->purchase->purchase_number ?? "OC-{$this->purchase->id}";
+
         return [
-            'title'   => $this->complete ? 'Compra recibida completa' : 'Recepción parcial de compra',
-            'message' => "Orden {$number}: " . ($this->complete ? 'toda la mercancía ingresó a bodega.' : 'ingresó un despacho parcial.'),
-            'url'     => route('purchases.show', $this->purchase),
+            'title' => $this->complete ? 'Compra recibida completa' : 'Recepción parcial de compra',
+            'message' => "Orden {$number}: ".($this->complete ? 'toda la mercancía ingresó a bodega.' : 'ingresó un despacho parcial.'),
+            'url' => route('purchases.show', $this->purchase),
         ];
     }
 }

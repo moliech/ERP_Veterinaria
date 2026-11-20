@@ -29,29 +29,29 @@ class InventoryController extends Controller implements HasMiddleware
         $movements = $product ? $this->movementsQuery($request, $product)->paginate(20)->withQueryString() : null;
 
         return view('inventory.kardex', [
-            'products'  => $products,
-            'product'   => $product,
+            'products' => $products,
+            'product' => $product,
             'movements' => $movements,
-            'totals'    => $product ? $this->totals($request, $product) : null,
-            'concepts'  => InventoryMovement::CONCEPTS,
+            'totals' => $product ? $this->totals($request, $product) : null,
+            'concepts' => InventoryMovement::CONCEPTS,
         ]);
     }
 
     public function pdf(Request $request, Product $product)
     {
         return Pdf::loadView('pdf.kardex', [
-            'product'   => $product,
+            'product' => $product,
             'movements' => $this->movementsQuery($request, $product)->get(),
-            'totals'    => $this->totals($request, $product),
-            'from'      => $request->input('from'),
-            'to'        => $request->input('to'),
+            'totals' => $this->totals($request, $product),
+            'from' => $request->input('from'),
+            'to' => $request->input('to'),
         ])->setPaper('letter', 'landscape')->stream("kardex-{$product->id}.pdf");
     }
 
     public function adjust(Product $product)
     {
         return view('inventory.adjust', [
-            'product'       => $product,
+            'product' => $product,
             'lastMovements' => $product->movements()->latest('id')->limit(5)->get(),
         ]);
     }
@@ -85,10 +85,11 @@ class InventoryController extends Controller implements HasMiddleware
     private function totals(Request $request, Product $product): array
     {
         $query = $this->movementsQuery($request, $product)->reorder();
+
         return [
             'entradas' => (int) (clone $query)->where('type', 'entrada')->sum('quantity'),
-            'salidas'  => (int) (clone $query)->where('type', 'salida')->sum('quantity'),
-            'cuadra'   => (int) ($product->movements()->latest('id')->value('balance') ?? 0) === (int) $product->stock,
+            'salidas' => (int) (clone $query)->where('type', 'salida')->sum('quantity'),
+            'cuadra' => (int) ($product->movements()->latest('id')->value('balance') ?? 0) === (int) $product->stock,
         ];
     }
 }

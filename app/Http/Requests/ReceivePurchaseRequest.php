@@ -14,7 +14,7 @@ class ReceivePurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'received'   => ['required', 'array', 'min:1'],
+            'received' => ['required', 'array', 'min:1'],
             'received.*' => ['nullable', 'integer', 'min:0'],
         ];
     }

@@ -25,7 +25,9 @@ class InventoryService
         return DB::transaction(function () use ($product, $countedStock, $reason) {
             $product = Product::withTrashed()->lockForUpdate()->findOrFail($product->id);
             $difference = $countedStock - $product->stock;
-            if ($difference === 0) return null;
+            if ($difference === 0) {
+                return null;
+            }
 
             return $difference > 0
                 ? $this->move($product, 'entrada', $difference, 'ajuste', null, null, $reason)
@@ -35,16 +37,18 @@ class InventoryService
 
     public function opening(Product $product): ?InventoryMovement
     {
-        if ($product->stock <= 0 || $product->movements()->exists()) return null;
+        if ($product->stock <= 0 || $product->movements()->exists()) {
+            return null;
+        }
 
         return InventoryMovement::create([
             'product_id' => $product->id,
-            'type'       => 'entrada',
-            'concept'    => 'inventario_inicial',
-            'quantity'   => $product->stock,
-            'balance'    => $product->stock,
-            'user_id'    => auth()->id(),
-            'notes'      => 'Saldo inicial del producto',
+            'type' => 'entrada',
+            'concept' => 'inventario_inicial',
+            'quantity' => $product->stock,
+            'balance' => $product->stock,
+            'user_id' => auth()->id(),
+            'notes' => 'Saldo inicial del producto',
         ]);
     }
 
@@ -67,16 +71,16 @@ class InventoryService
             $product->update(['stock' => $balance]);
 
             return InventoryMovement::create([
-                'product_id'     => $product->id,
-                'type'           => $type,
-                'concept'        => $concept,
-                'quantity'       => $quantity,
-                'balance'        => $balance,
-                'unit_cost'      => $unitCost,
+                'product_id' => $product->id,
+                'type' => $type,
+                'concept' => $concept,
+                'quantity' => $quantity,
+                'balance' => $balance,
+                'unit_cost' => $unitCost,
                 'reference_type' => $reference?->getMorphClass(),
-                'reference_id'   => $reference?->getKey(),
-                'user_id'        => auth()->id(),
-                'notes'          => $notes,
+                'reference_id' => $reference?->getKey(),
+                'user_id' => auth()->id(),
+                'notes' => $notes,
             ]);
         });
     }

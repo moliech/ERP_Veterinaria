@@ -28,10 +28,10 @@ class AuditController extends Controller implements HasMiddleware
             ->with(['causer', 'subject' => function (MorphTo $morphTo) {
                 $morphTo->constrain([
                     Category::class => fn ($q) => $q->withTrashed(),
-                    Product::class  => fn ($q) => $q->withTrashed(),
-                    Client::class   => fn ($q) => $q->withTrashed(),
+                    Product::class => fn ($q) => $q->withTrashed(),
+                    Client::class => fn ($q) => $q->withTrashed(),
                     Provider::class => fn ($q) => $q->withTrashed(),
-                    Sale::class     => fn ($q) => $q->withTrashed(),
+                    Sale::class => fn ($q) => $q->withTrashed(),
                     Purchase::class => fn ($q) => $q->withTrashed(),
                 ]);
             }])
@@ -46,9 +46,9 @@ class AuditController extends Controller implements HasMiddleware
 
         return view('audit.index', [
             'activities' => $activities,
-            'modules'    => Activity::query()->distinct()->orderBy('log_name')->pluck('log_name'),
-            'users'      => User::orderBy('name')->get(['id', 'name']),
-            'events'     => ['created' => 'Creado', 'updated' => 'Actualizado', 'deleted' => 'Eliminado', 'restored' => 'Restaurado'],
+            'modules' => Activity::query()->distinct()->orderBy('log_name')->pluck('log_name'),
+            'users' => User::orderBy('name')->get(['id', 'name']),
+            'events' => ['created' => 'Creado', 'updated' => 'Actualizado', 'deleted' => 'Eliminado', 'restored' => 'Restaurado'],
         ]);
     }
 }

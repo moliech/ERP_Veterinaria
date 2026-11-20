@@ -29,12 +29,12 @@ final class ThemeContrastService
         $hoverHex = $this->adjustLuminance($hex, -0.15);
 
         return [
-            'primitive'           => $hex,
-            'brand_primary'       => $hex,
+            'primitive' => $hex,
+            'brand_primary' => $hex,
             'brand_primary_hover' => $hoverHex,
             'brand_contrast_text' => $optimalTextOnBrand,
             'ratio_against_white' => round($ratioVsWhite, 2),
-            'wcag_aa_compliant'   => $ratioVsWhite >= 4.5,
+            'wcag_aa_compliant' => $ratioVsWhite >= 4.5,
         ];
     }
 
@@ -44,6 +44,7 @@ final class ThemeContrastService
     public function getRelativeLuminance(string $hex): float
     {
         [$r, $g, $b] = $this->hexToRgbNormalized($hex);
+
         return (0.2126 * $this->linearize($r)) + (0.7152 * $this->linearize($g)) + (0.0722 * $this->linearize($b));
     }
 
@@ -54,6 +55,7 @@ final class ThemeContrastService
     {
         $l1 = max($this->getRelativeLuminance($hex1), $this->getRelativeLuminance($hex2));
         $l2 = min($this->getRelativeLuminance($hex1), $this->getRelativeLuminance($hex2));
+
         return ($l1 + 0.05) / ($l2 + 0.05);
     }
 
@@ -71,12 +73,14 @@ final class ThemeContrastService
         if (! preg_match('/^[0-9A-Fa-f]{6}$/', $clean)) {
             throw new InvalidArgumentException("Formato hexadecimal inválido: {$hex}");
         }
-        return '#' . strtoupper($clean);
+
+        return '#'.strtoupper($clean);
     }
 
     private function hexToRgbNormalized(string $hex): array
     {
         $clean = ltrim($this->normalizeHex($hex), '#');
+
         return [
             hexdec(substr($clean, 0, 2)) / 255.0,
             hexdec(substr($clean, 2, 2)) / 255.0,
@@ -88,6 +92,7 @@ final class ThemeContrastService
     {
         [$r, $g, $b] = $this->hexToRgbNormalized($hex);
         $factor = 1 + $delta;
+
         return sprintf(
             '#%02X%02X%02X',
             (int) max(0, min(255, round($r * 255 * $factor))),

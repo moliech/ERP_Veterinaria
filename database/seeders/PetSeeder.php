@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Pet;
+use Illuminate\Database\Seeder;
 
 class PetSeeder extends Seeder
 {

@@ -8,14 +8,13 @@ use App\Exports\SalesExport;
 use App\Http\Requests\ImportProductsRequest;
 use App\Imports\ProductsImport;
 use App\Services\InventoryService;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelController extends Controller
 {
     public function exportProducts()
     {
-        return Excel::download(new ProductsExport, 'productos_vetpets_' . now()->format('Y-m-d') . '.xlsx');
+        return Excel::download(new ProductsExport, 'productos_vetpets_'.now()->format('Y-m-d').'.xlsx');
     }
 
     public function exportTemplate()
@@ -43,6 +42,6 @@ class ExcelController extends Controller
 
     public function exportSales()
     {
-        return Excel::download(new SalesExport, 'ventas_vetpets_' . now()->format('Y-m-d') . '.xlsx');
+        return Excel::download(new SalesExport, 'ventas_vetpets_'.now()->format('Y-m-d').'.xlsx');
     }
 }

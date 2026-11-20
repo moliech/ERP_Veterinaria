@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\ActiveRoleController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PricingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -85,21 +89,21 @@ Route::middleware('auth')->group(function () {
     });
 
     // Kardex y Ajustes de Inventario (Clase 12)
-    if (class_exists(\App\Http\Controllers\InventoryController::class)) {
-        Route::get('inventario/kardex', [\App\Http\Controllers\InventoryController::class, 'kardex'])->name('inventory.kardex');
-        Route::get('inventario/kardex/{product}/pdf', [\App\Http\Controllers\InventoryController::class, 'pdf'])->withTrashed()->name('inventory.pdf');
-        Route::get('inventario/ajustes/{product}', [\App\Http\Controllers\InventoryController::class, 'adjust'])->name('inventory.adjust');
-        Route::post('inventario/ajustes/{product}', [\App\Http\Controllers\InventoryController::class, 'storeAdjustment'])->name('inventory.adjust.store');
+    if (class_exists(InventoryController::class)) {
+        Route::get('inventario/kardex', [InventoryController::class, 'kardex'])->name('inventory.kardex');
+        Route::get('inventario/kardex/{product}/pdf', [InventoryController::class, 'pdf'])->withTrashed()->name('inventory.pdf');
+        Route::get('inventario/ajustes/{product}', [InventoryController::class, 'adjust'])->name('inventory.adjust');
+        Route::post('inventario/ajustes/{product}', [InventoryController::class, 'storeAdjustment'])->name('inventory.adjust.store');
     }
 
     // Bitácora de Auditoría Forense (Clase 12)
-    if (class_exists(\App\Http\Controllers\AuditController::class)) {
-        Route::get('auditoria', [\App\Http\Controllers\AuditController::class, 'index'])->name('audit.index');
+    if (class_exists(AuditController::class)) {
+        Route::get('auditoria', [AuditController::class, 'index'])->name('audit.index');
     }
 
     // Interoperabilidad e Importación / Exportación Excel (Clase 13)
-    if (class_exists(\App\Http\Controllers\ExcelController::class)) {
-        Route::controller(\App\Http\Controllers\ExcelController::class)->group(function () {
+    if (class_exists(ExcelController::class)) {
+        Route::controller(ExcelController::class)->group(function () {
             Route::get('productos/exportar', 'exportProducts')
                 ->name('products.export')
                 ->middleware('permission:exportar-productos');
@@ -123,8 +127,8 @@ Route::middleware('auth')->group(function () {
     }
 
     // Centro de Notificaciones y Alertas (Clase 14)
-    if (class_exists(\App\Http\Controllers\NotificationController::class)) {
-        Route::controller(\App\Http\Controllers\NotificationController::class)->group(function () {
+    if (class_exists(NotificationController::class)) {
+        Route::controller(NotificationController::class)->group(function () {
             Route::get('notificaciones', 'index')->name('notifications.index');
             Route::patch('notificaciones/{id}', 'read')->name('notifications.read');
             Route::post('notificaciones/leer-todas', 'readAll')->name('notifications.read-all');

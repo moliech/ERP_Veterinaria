@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Purchase;
+use App\Events\PurchaseReceived;
+use App\Models\CompanySetting;
 use App\Models\Product;
+use App\Models\Purchase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -14,6 +16,7 @@ class PurchaseService
     ) {
         $this->inventory = $inventory ?? (class_exists(InventoryService::class) ? app(InventoryService::class) : null);
     }
+
     /**
      * 1. Registrar una nueva orden de compra (Estado PENDIENTE, NO modifica stock).
      */
@@ -25,20 +28,20 @@ class PurchaseService
 
             foreach ($data['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                
+
                 $lineSubtotal = $item['quantity'] * $item['unit_cost'];
                 $subtotal += $lineSubtotal;
 
                 $items[] = [
-                    'product_id'        => $product->id,
-                    'quantity'          => $item['quantity'],
+                    'product_id' => $product->id,
+                    'quantity' => $item['quantity'],
                     'received_quantity' => 0,
-                    'unit_cost'         => $item['unit_cost'],
-                    'subtotal'          => $lineSubtotal,
+                    'unit_cost' => $item['unit_cost'],
+                    'subtotal' => $lineSubtotal,
                 ];
             }
 
-            $company = \App\Models\CompanySetting::current();
+            $company = CompanySetting::current();
             $taxRate = ((float) ($company->tax_rate ?? 19)) / 100;
             $tax = round($subtotal * $taxRate, 2); // IVA parametrizable (19% por defecto)
             $total = $subtotal + $tax;
@@ -46,18 +49,18 @@ class PurchaseService
             // Generar número consecutivo parametrizable (OC-00001 por defecto)
             $nextId = (Purchase::withTrashed()->max('id') ?? 0) + 1;
             $prefix = trim((string) ($company->purchase_prefix ?? 'OC'), '-');
-            $purchaseNumber = $prefix . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            $purchaseNumber = $prefix.'-'.str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
             $purchase = Purchase::create([
                 'purchase_number' => $purchaseNumber,
-                'provider_id'     => $data['provider_id'],
-                'user_id'         => $userId,
-                'purchase_date'   => $data['purchase_date'],
-                'subtotal'        => $subtotal,
-                'tax'             => $tax,
-                'total'           => $total,
-                'status'          => 'pendiente',
-                'notes'           => $data['notes'] ?? null,
+                'provider_id' => $data['provider_id'],
+                'user_id' => $userId,
+                'purchase_date' => $data['purchase_date'],
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total,
+                'status' => 'pendiente',
+                'notes' => $data['notes'] ?? null,
             ]);
 
             $purchase->details()->createMany($items);
@@ -86,7 +89,7 @@ class PurchaseService
 
                 if ($qtyToReceive < 0) {
                     throw ValidationException::withMessages([
-                        'error' => "La cantidad recibida no puede ser negativa.",
+                        'error' => 'La cantidad recibida no puede ser negativa.',
                     ]);
                 }
 
@@ -127,22 +130,22 @@ class PurchaseService
             // Regla obligatoria 2: La recepción debe traer al menos una unidad
             if ($totalUnitsReceivedThisBatch === 0) {
                 throw ValidationException::withMessages([
-                    'error' => "Debe ingresar al menos una unidad recibida para procesar la entrega.",
+                    'error' => 'Debe ingresar al menos una unidad recibida para procesar la entrega.',
                 ]);
             }
 
             // Determinar si la orden quedó completa (recibida) o parcial
             $purchase->refresh();
-            $allCompleted = $purchase->details->every(fn($d) => $d->received_quantity >= $d->quantity);
+            $allCompleted = $purchase->details->every(fn ($d) => $d->received_quantity >= $d->quantity);
 
             $purchase->update([
-                'status'      => $allCompleted ? 'recibida' : 'parcial',
+                'status' => $allCompleted ? 'recibida' : 'parcial',
                 'received_at' => $allCompleted ? now() : $purchase->received_at,
             ]);
 
             // Disparo del evento de compra recibida (Clase 14)
-            if (class_exists(\App\Events\PurchaseReceived::class)) {
-                \App\Events\PurchaseReceived::dispatch($purchase, $allCompleted);
+            if (class_exists(PurchaseReceived::class)) {
+                PurchaseReceived::dispatch($purchase, $allCompleted);
             }
 
             return $purchase;

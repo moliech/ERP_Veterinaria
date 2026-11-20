@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\SaleRegistered;
+use App\Models\CompanySetting;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
@@ -14,19 +16,20 @@ class SaleService
     ) {
         $this->inventory = $inventory ?? (class_exists(InventoryService::class) ? app(InventoryService::class) : null);
     }
+
     /**
      * Registra una venta completa en la base de datos dentro de una transacción.
      * Descuenta automáticamente el stock de los productos.
      *
-     * @param array $data Contiene 'client_id', 'sale_date', 'notes' e 'items' [[product_id, quantity], ...]
-     * @param int $userId ID del usuario vendedor que registra la venta
-     * @return Sale
+     * @param  array  $data  Contiene 'client_id', 'sale_date', 'notes' e 'items' [[product_id, quantity], ...]
+     * @param  int  $userId  ID del usuario vendedor que registra la venta
+     *
      * @throws ValidationException
      */
     public function register(array $data, int $userId): Sale
     {
         return DB::transaction(function () use ($data, $userId) {
-            
+
             // 1. Agrupar cantidades por producto si se envió el mismo producto en varias filas
             $quantities = [];
             foreach ($data['items'] as $item) {
@@ -38,7 +41,7 @@ class SaleService
             $itemsToProcess = [];
             $subtotal = 0;
             $taxTotal = 0;
-            $company = \App\Models\CompanySetting::current();
+            $company = CompanySetting::current();
             $defaultTaxRate = (float) ($company->tax_rate ?? 19);
 
             foreach ($quantities as $productId => $quantity) {
@@ -46,7 +49,7 @@ class SaleService
                 $product = Product::lockForUpdate()->findOrFail($productId);
 
                 // Regla de Negocio 1: Producto inactivo
-                if (isset($product->active) && !$product->active) {
+                if (isset($product->active) && ! $product->active) {
                     throw ValidationException::withMessages([
                         'items' => "El producto «{$product->name}» está inactivo y no se puede vender.",
                     ]);
@@ -55,7 +58,7 @@ class SaleService
                 // Regla de Negocio 2: Control de vencimiento de lote
                 if ($product->expiration_date && $product->expiration_date->startOfDay()->isPast()) {
                     throw ValidationException::withMessages([
-                        'items' => "El lote «" . ($product->batch_code ?? 'S/L') . "» del producto «{$product->name}» venció el {$product->expiration_date->format('d/m/Y')} y no se puede vender.",
+                        'items' => 'El lote «'.($product->batch_code ?? 'S/L')."» del producto «{$product->name}» venció el {$product->expiration_date->format('d/m/Y')} y no se puede vender.",
                     ]);
                 }
 
@@ -88,23 +91,23 @@ class SaleService
             // 4. Crear la cabecera de la venta (Factura)
             $sale = Sale::create([
                 'invoice_number' => $this->generateNextInvoiceNumber(),
-                'client_id'      => $data['client_id'],
-                'user_id'        => $userId,
-                'sale_date'      => $data['sale_date'],
-                'subtotal'       => $subtotal,
-                'tax'            => $tax,
-                'total'          => $total,
-                'status'         => 'pagada',
-                'notes'          => $data['notes'] ?? null,
+                'client_id' => $data['client_id'],
+                'user_id' => $userId,
+                'sale_date' => $data['sale_date'],
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total,
+                'status' => 'pagada',
+                'notes' => $data['notes'] ?? null,
             ]);
 
             // 5. Crear los detalles de la venta y descontar el inventario
             foreach ($itemsToProcess as $item) {
                 $sale->details()->create([
                     'product_id' => $item['product']->id,
-                    'quantity'   => $item['quantity'],
+                    'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
-                    'subtotal'   => $item['subtotal'],
+                    'subtotal' => $item['subtotal'],
                 ]);
 
                 // Descuento automático de inventario y registro en Kardex
@@ -116,8 +119,8 @@ class SaleService
             }
 
             // Disparo del evento de venta registrada (Clase 14)
-            if (class_exists(\App\Events\SaleRegistered::class)) {
-                \App\Events\SaleRegistered::dispatch($sale);
+            if (class_exists(SaleRegistered::class)) {
+                SaleRegistered::dispatch($sale);
             }
 
             return $sale;
@@ -127,9 +130,6 @@ class SaleService
     /**
      * Anula una venta y aplica la regla de negocio inversa:
      * Devuelve las cantidades vendidas al inventario de productos.
-     *
-     * @param Sale $sale
-     * @return Sale
      */
     public function cancel(Sale $sale): Sale
     {
@@ -155,15 +155,13 @@ class SaleService
 
     /**
      * Genera el siguiente número secuencial de factura: FV-00001, FV-00002, etc.
-     *
-     * @return string
      */
     private function generateNextInvoiceNumber(): string
     {
         $lastSale = Sale::withTrashed()->orderByDesc('id')->first();
         $nextId = $lastSale ? $lastSale->id + 1 : 1;
-        $prefix = trim((string) (\App\Models\CompanySetting::current()->invoice_prefix ?? 'FV'), '-');
+        $prefix = trim((string) (CompanySetting::current()->invoice_prefix ?? 'FV'), '-');
 
-        return $prefix . '-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        return $prefix.'-'.str_pad($nextId, 5, '0', STR_PAD_LEFT);
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Sale;
+use App\Http\Requests\StoreSaleRequest;
 use App\Models\Owner;
 use App\Models\Product;
+use App\Models\Sale;
 use App\Services\SaleService;
-use App\Http\Requests\StoreSaleRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -21,7 +21,7 @@ class SaleController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-             new Middleware('permission:ver-ventas', only: ['index', 'show', 'pdf']),
+            new Middleware('permission:ver-ventas', only: ['index', 'show', 'pdf']),
             new Middleware('permission:crear-ventas', only: ['create', 'store']),
             new Middleware('permission:eliminar-ventas', only: ['destroy']),
         ];
@@ -35,13 +35,13 @@ class SaleController extends Controller implements HasMiddleware
         $sales = Sale::withTrashed()
             ->with(['client', 'user'])
             ->when($request->filled('search'), function ($q) use ($request) {
-                $search = '%' . $request->string('search') . '%';
+                $search = '%'.$request->string('search').'%';
                 $q->where(function ($q) use ($search) {
                     $q->where('invoice_number', 'like', $search)
-                      ->orWhereHas('client', function ($q) use ($search) {
-                          $q->where('first_name', 'like', $search)
-                            ->orWhere('last_name', 'like', $search);
-                      });
+                        ->orWhereHas('client', function ($q) use ($search) {
+                            $q->where('first_name', 'like', $search)
+                                ->orWhere('last_name', 'like', $search);
+                        });
                 });
             })
             ->when($request->filled('from'), fn ($q) => $q->whereDate('sale_date', '>=', $request->input('from')))
@@ -69,7 +69,7 @@ class SaleController extends Controller implements HasMiddleware
             ->where('current_stock', '>', 0)
             ->where(function ($q) {
                 $q->whereNull('expiration_date')
-                  ->orWhereDate('expiration_date', '>=', now()->toDateString());
+                    ->orWhereDate('expiration_date', '>=', now()->toDateString());
             })
             ->orderBy('name')
             ->get(['id', 'name', 'sale_price', 'tax_rate', 'batch_code', 'expiration_date', 'current_stock']);
@@ -105,16 +105,14 @@ class SaleController extends Controller implements HasMiddleware
         return view('sales.show', compact('sale'));
     }
 
-
     public function pdf(Sale $sale)
     {
-    $sale->load(['client', 'user', 'details.product']);
+        $sale->load(['client', 'user', 'details.product']);
 
-    $pdf = Pdf::loadView('pdf.sale', compact('sale'));
+        $pdf = Pdf::loadView('pdf.sale', compact('sale'));
 
-    return $pdf->stream('Factura_' . $sale->invoice_number . '.pdf');
+        return $pdf->stream('Factura_'.$sale->invoice_number.'.pdf');
     }
-
 
     /**
      * Anular una venta utilizando el SaleService (devuelve el stock).

@@ -17,10 +17,10 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email'       => ['required', 'email'],
-            'password'    => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
             'device_name' => ['nullable', 'string', 'max:100'],
-            'role'        => ['nullable', 'string'],
+            'role' => ['nullable', 'string'],
         ]);
 
         $deviceName = $data['device_name'] ?? 'dispositivo-api';
@@ -52,7 +52,7 @@ class AuthController extends Controller
         $token = $user->createToken($deviceName, $role ? ["rol:{$role}"] : []);
 
         return response()->json([
-            'token'      => $token->plainTextToken,
+            'token' => $token->plainTextToken,
             'token_type' => 'Bearer',
             'rol_activo' => $role,
         ], 201);
@@ -72,11 +72,11 @@ class AuthController extends Controller
             ->unique()->sort()->values();
 
         return response()->json([
-            'id'         => $user->id,
-            'nombre'     => $user->name,
-            'email'      => $user->email,
+            'id' => $user->id,
+            'nombre' => $user->name,
+            'email' => $user->email,
             'rol_activo' => $role?->name,
-            'permisos'   => $permissions,
+            'permisos' => $permissions,
         ]);
     }
 

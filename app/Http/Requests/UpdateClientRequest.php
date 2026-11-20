@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Owner;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Owner;
 
 class UpdateClientRequest extends FormRequest
 {
@@ -25,17 +25,17 @@ class UpdateClientRequest extends FormRequest
         $clientId = $client instanceof Owner ? $client->id : $client;
 
         return [
-            'document_type'   => ['required', Rule::in(['CC', 'NIT', 'CE', 'PP'])],
+            'document_type' => ['required', Rule::in(['CC', 'NIT', 'CE', 'PP'])],
             'document_number' => [
                 'required',
                 'string',
                 'max:20',
                 Rule::unique('owners', 'document_number')->ignore($clientId),
             ],
-            'first_name'      => ['required', 'string', 'max:50'],
-            'last_name'       => ['required', 'string', 'max:50'],
-            'email'           => ['nullable', 'email', 'max:100'],
-            'address'         => ['nullable', 'string', 'max:150'],
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['required', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:100'],
+            'address' => ['nullable', 'string', 'max:150'],
         ];
     }
 
@@ -45,12 +45,12 @@ class UpdateClientRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'document_type'   => 'tipo de documento',
+            'document_type' => 'tipo de documento',
             'document_number' => 'número de documento',
-            'first_name'      => 'nombres',
-            'last_name'       => 'apellidos',
-            'email'           => 'correo electrónico',
-            'address'         => 'dirección',
+            'first_name' => 'nombres',
+            'last_name' => 'apellidos',
+            'email' => 'correo electrónico',
+            'address' => 'dirección',
         ];
     }
 }

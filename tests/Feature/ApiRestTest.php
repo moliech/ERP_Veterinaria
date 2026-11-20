@@ -22,10 +22,10 @@ class ApiRestTest extends TestCase
     private function getToken(string $email, ?string $role = null): string
     {
         $response = $this->postJson('/api/v1/login', array_filter([
-            'email'       => $email,
-            'password'    => 'password',
+            'email' => $email,
+            'password' => 'password',
             'device_name' => 'test-device',
-            'role'        => $role,
+            'role' => $role,
         ]));
 
         $response->assertStatus(201);
@@ -37,13 +37,13 @@ class ApiRestTest extends TestCase
     {
         // Credenciales incorrectas
         $this->postJson('/api/v1/login', [
-            'email'    => 'admin@test.com',
+            'email' => 'admin@test.com',
             'password' => 'clave-erronea',
         ])->assertStatus(422)->assertJsonValidationErrors('email');
 
         // Usuario con múltiples roles sin especificar rol
         $this->postJson('/api/v1/login', [
-            'email'    => 'supervisor@test.com',
+            'email' => 'supervisor@test.com',
             'password' => 'password',
         ])->assertStatus(422)->assertJsonValidationErrors('role');
 
@@ -105,7 +105,7 @@ class ApiRestTest extends TestCase
             ->postJson('/api/v1/sales', [
                 'client_id' => $client->id,
                 'sale_date' => now()->toDateString(),
-                'items'     => [],
+                'items' => [],
             ])->assertStatus(422)->assertJsonValidationErrors('items');
 
         // Venta exitosa
@@ -114,8 +114,8 @@ class ApiRestTest extends TestCase
             ->postJson('/api/v1/sales', [
                 'client_id' => $client->id,
                 'sale_date' => now()->toDateString(),
-                'notes'     => 'Venta de prueba automatizada API',
-                'items'     => [
+                'notes' => 'Venta de prueba automatizada API',
+                'items' => [
                     ['product_id' => $product->id, 'quantity' => 2],
                 ],
             ])->assertStatus(201);
@@ -145,7 +145,7 @@ class ApiRestTest extends TestCase
             ->postJson('/api/v1/sales', [
                 'client_id' => $client->id,
                 'sale_date' => now()->toDateString(),
-                'items'     => [
+                'items' => [
                     ['product_id' => $product->id, 'quantity' => 1],
                 ],
             ])->assertForbidden();

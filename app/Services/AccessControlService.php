@@ -70,11 +70,11 @@ class AccessControlService
                     ->event($isNew ? 'roles_asignados' : 'roles_modificados')
                     ->withProperties([
                         'old' => [
-                            'roles'       => $oldRoles,
+                            'roles' => $oldRoles,
                             'permissions' => $oldDirect,
                         ],
                         'attributes' => [
-                            'roles'       => $newRoles,
+                            'roles' => $newRoles,
                             'permissions' => $newDirect,
                         ],
                     ])

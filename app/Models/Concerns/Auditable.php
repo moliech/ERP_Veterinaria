@@ -49,11 +49,11 @@ trait Auditable
     protected function auditActionDescription(string $eventName): string
     {
         return match ($eventName) {
-            'created'  => 'Creación de',
-            'updated'  => 'Actualización de',
-            'deleted'  => 'Eliminación de',
+            'created' => 'Creación de',
+            'updated' => 'Actualización de',
+            'deleted' => 'Eliminación de',
             'restored' => 'Restauración de',
-            default    => ucfirst($eventName) . ' en',
+            default => ucfirst($eventName).' en',
         };
     }
 }

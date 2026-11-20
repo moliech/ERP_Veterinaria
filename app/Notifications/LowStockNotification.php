@@ -33,9 +33,9 @@ class LowStockNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'title'   => 'Stock bajo',
+            'title' => 'Stock bajo',
             'message' => "«{$this->product->name}» quedó con {$this->product->current_stock} unidades.",
-            'url'     => route('inventory.kardex', ['product' => $this->product->id]),
+            'url' => route('inventory.kardex', ['product' => $this->product->id]),
         ];
     }
 }

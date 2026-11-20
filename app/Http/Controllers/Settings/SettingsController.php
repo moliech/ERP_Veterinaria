@@ -36,6 +36,4 @@ class SettingsController extends Controller implements HasMiddleware
             'modulesEnabled' => SystemModule::where('is_enabled', true)->count(),
         ]);
     }
-
- 
 }

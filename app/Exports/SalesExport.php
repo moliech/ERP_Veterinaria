@@ -4,13 +4,14 @@ namespace App\Exports;
 
 use App\Models\Sale;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
+class SalesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function collection()
     {
@@ -33,7 +34,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     }
 
     /**
-     * @param Sale $sale
+     * @param  Sale  $sale
      */
     public function map($sale): array
     {
@@ -56,8 +57,8 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             1 => [
                 'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FF0369A1'] // Sky 700
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FF0369A1'], // Sky 700
                 ],
             ],
         ];

@@ -25,12 +25,12 @@ class DailySummaryNotification extends Notification implements ShouldQueue
         $mail = (new MailMessage)
             ->subject("Resumen Gerencial del Día ({$s['date']}) - VetPets ERP")
             ->greeting("Estimado(a) {$notifiable->name},")
-            ->line("Ventas del día: {$s['sales_count']} transacciones facturadas por $" . number_format($s['sales_total'], 2) . '.')
-            ->line('Compras registradas hoy: $' . number_format($s['purchases_total'], 2) . '.')
+            ->line("Ventas del día: {$s['sales_count']} transacciones facturadas por $".number_format($s['sales_total'], 2).'.')
+            ->line('Compras registradas hoy: $'.number_format($s['purchases_total'], 2).'.')
             ->line("Órdenes de compra pendientes de recibir: {$s['pending_purchases']}.");
 
         if (! empty($s['low_stock'])) {
-            $mail->line('Productos en stock crítico: ' . implode(', ', $s['low_stock']) . '.');
+            $mail->line('Productos en stock crítico: '.implode(', ', $s['low_stock']).'.');
         }
 
         return $mail->action('Abrir Dashboard de Operaciones', route('dashboard'))

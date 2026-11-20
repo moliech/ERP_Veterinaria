@@ -21,12 +21,12 @@ class SendDailySummary extends Command
         $date = $this->option('fecha') ?: now()->toDateString();
 
         $summary = [
-            'date'              => $date,
-            'sales_count'       => Sale::whereDate('sale_date', $date)->count(),
-            'sales_total'       => (float) Sale::whereDate('sale_date', $date)->sum('total'),
-            'purchases_total'   => (float) Purchase::whereDate('purchase_date', $date)->sum('total'),
+            'date' => $date,
+            'sales_count' => Sale::whereDate('sale_date', $date)->count(),
+            'sales_total' => (float) Sale::whereDate('sale_date', $date)->sum('total'),
+            'purchases_total' => (float) Purchase::whereDate('purchase_date', $date)->sum('total'),
             'pending_purchases' => Purchase::whereIn('status', ['pendiente', 'parcial'])->count(),
-            'low_stock'         => Product::where('active', true)
+            'low_stock' => Product::where('active', true)
                 ->where('current_stock', '<=', config('erp.low_stock_threshold', 5))
                 ->orderBy('current_stock')
                 ->pluck('name')

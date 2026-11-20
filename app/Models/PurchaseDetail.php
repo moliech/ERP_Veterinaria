@@ -18,10 +18,10 @@ class PurchaseDetail extends Model
     protected function casts(): array
     {
         return [
-            'quantity'          => 'integer',
+            'quantity' => 'integer',
             'received_quantity' => 'integer',
-            'unit_cost'         => 'decimal:2',
-            'subtotal'          => 'decimal:2',
+            'unit_cost' => 'decimal:2',
+            'subtotal' => 'decimal:2',
         ];
     }
 
