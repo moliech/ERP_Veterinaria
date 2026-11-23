@@ -1,6 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Auditoría Forense — Bitácora de Cambios</h2>
+        <div class="flex items-center justify-between gap-4">
+            <div>
+                <h2 class="font-bold text-xl text-slate-800 leading-tight">Auditoría — Bitácora de Cambios</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Historial de operaciones sobre entidades del sistema y eventos de seguridad</p>
+            </div>
+            <a href="{{ route('dashboard') }}" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </a>
+        </div>
     </x-slot>
 
     @php
@@ -53,41 +61,46 @@
                         <input id="to" type="date" name="to" value="{{ request('to') }}" class="mt-1 border-gray-300 rounded-md text-sm">
                     </div>
                     <x-primary-button>Filtrar</x-primary-button>
+                    @if (request()->hasAny(['module', 'event', 'user', 'from', 'to']))
+                        <a href="{{ route('audit.index') }}" class="px-3.5 py-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-semibold transition">
+                            Limpiar
+                        </a>
+                    @endif
                 </form>
 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm">
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
                         <thead>
-                            <tr class="border-b text-left bg-slate-50">
-                                <th class="p-2.5">Fecha / Hora</th>
-                                <th class="p-2.5">Usuario</th>
-                                <th class="p-2.5">Módulo</th>
-                                <th class="p-2.5">Evento</th>
-                                <th class="p-2.5">Registro</th>
-                                <th class="p-2.5">Cambios Detectados (Visual Diffs)</th>
+                            <tr class="text-left bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-600">
+                                <th class="px-4 py-3 whitespace-nowrap">Fecha / Hora</th>
+                                <th class="px-4 py-3 whitespace-nowrap">Usuario</th>
+                                <th class="px-4 py-3 whitespace-nowrap">Módulo</th>
+                                <th class="px-4 py-3 whitespace-nowrap">Evento</th>
+                                <th class="px-4 py-3 whitespace-nowrap">Registro</th>
+                                <th class="px-4 py-3">Cambios Detectados</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-100 bg-white">
                             @forelse ($activities as $activity)
                                 @php
                                     $changes = $activity->attribute_changes ?? $activity->properties;
                                     $new = is_array($changes) ? ($changes['attributes'] ?? []) : ($changes?->get('attributes', []) ?? []);
                                     $old = is_array($changes) ? ($changes['old'] ?? []) : ($changes?->get('old', []) ?? []);
                                 @endphp
-                                <tr class="border-b align-top hover:bg-slate-50/70 transition">
-                                    <td class="p-2.5 whitespace-nowrap font-mono text-xs text-slate-600">{{ $activity->created_at->format('d/m/Y H:i:s') }}</td>
-                                    <td class="p-2.5 font-medium">{{ $activity->causer?->name ?? 'Sistema' }}</td>
-                                    <td class="p-2.5"><span class="px-2 py-0.5 rounded text-xs font-mono bg-slate-100 text-slate-700">{{ $activity->log_name }}</span></td>
-                                    <td class="p-2.5">
-                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold border {{ $eventColors[$activity->event] ?? 'bg-gray-100' }}">
+                                <tr class="align-top hover:bg-slate-50/70 transition">
+                                    <td class="px-4 py-3 whitespace-nowrap font-mono text-xs text-slate-600">{{ $activity->created_at->format('d/m/Y H:i:s') }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-800">{{ $activity->causer?->name ?? 'Sistema' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap"><span class="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200">{{ $activity->log_name }}</span></td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold border {{ $eventColors[$activity->event] ?? 'bg-gray-100' }}">
                                             {{ $activity->description }}
                                         </span>
                                     </td>
-                                    <td class="p-2.5">
+                                    <td class="px-4 py-3 min-w-[170px]">
                                         <span class="font-medium text-slate-800">{{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}</span>
-                                        <span class="block text-xs text-slate-500">{{ $activity->subject?->name ?? $activity->subject?->invoice_number ?? $activity->subject?->purchase_number }}</span>
+                                        <span class="block text-xs text-slate-500 mt-0.5">{{ $activity->subject?->name ?? $activity->subject?->invoice_number ?? $activity->subject?->purchase_number }}</span>
                                     </td>
-                                    <td class="p-2.5">
+                                    <td class="px-4 py-3 min-w-[280px]">
                                         <ul class="space-y-1.5">
                                             @foreach ($new as $field => $value)
                                                 <li class="text-xs flex items-center flex-wrap gap-1.5">

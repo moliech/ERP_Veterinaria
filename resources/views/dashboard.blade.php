@@ -292,16 +292,16 @@
                     </div>
 
                     @if (isset($expiringLots) && $expiringLots->isNotEmpty())
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                             @foreach ($expiringLots as $lot)
                                 @php
                                     $status = $lot->expirationStatus();
                                     $daysLeft = (int) now()->startOfDay()->diffInDays($lot->expiration_date?->startOfDay(), false);
                                 @endphp
-                                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-start justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <div class="font-bold text-xs text-slate-900 truncate">{{ $lot->name }}</div>
-                                        <div class="text-[11px] font-mono text-slate-600 mt-0.5">
+                                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-start justify-between gap-3 w-full overflow-hidden">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-bold text-xs text-slate-900 leading-snug break-words">{{ $lot->name }}</div>
+                                        <div class="text-[11px] font-mono text-slate-600 mt-1">
                                             Lote: <strong class="text-slate-800">{{ $lot->batch_code ?? 'S/L' }}</strong>
                                         </div>
                                         <div class="text-[10px] text-slate-500 mt-0.5">

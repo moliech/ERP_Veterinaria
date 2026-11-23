@@ -13,7 +13,7 @@
 
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-900">
                 <strong>¿Cómo funciona la Gestión de Módulos?</strong>
-                Al deshabilitar un módulo, se oculta automáticamente del menú lateral, del Dashboard y se bloquea el acceso directo a sus rutas mediante el middleware <code>EnsureModuleEnabled</code>, pero <strong>se conserva el 100% de los datos históricos</strong> en la base de datos. El sistema valida automáticamente las dependencias entre módulos antes de permitir desactivarlos.
+                Al deshabilitar un módulo opcional, se oculta automáticamente del menú lateral y del panel principal y se restringe el acceso a sus rutas, pero <strong>se conserva el 100 % de los datos históricos</strong> en la base de datos. Los módulos núcleo o requeridos por otros módulos activos permanecen protegidos para mantener la integridad operativa.
             </div>
 
             <div class="bg-white shadow rounded-xl overflow-hidden border border-slate-200">
@@ -28,6 +28,13 @@
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         @foreach ($modules as $module)
+                            @php
+                                $blockingDependents = $modules
+                                    ->filter(fn ($other) => $other->is_enabled && in_array($module->key, $other->depends_on ?? [], true))
+                                    ->pluck('name')
+                                    ->all();
+                                $canToggle = ! $module->is_core && (! $module->is_enabled || empty($blockingDependents));
+                            @endphp
                             <tr class="hover:bg-slate-50/80">
                                 <td class="p-4">
                                     <div class="flex items-start space-x-3">
@@ -58,14 +65,25 @@
                                     <x-status-badge :active="$module->is_enabled" />
                                 </td>
                                 <td class="p-4 text-right">
-                                    <form method="POST" action="{{ route('settings.modules.toggle', $module) }}" class="inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit"
-                                                class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $module->is_enabled ? 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100' : 'bg-emerald-600 text-white hover:bg-emerald-700' }}">
-                                            {{ $module->is_enabled ? 'Deshabilitar' : 'Habilitar módulo' }}
-                                        </button>
-                                    </form>
+                                    @if ($module->is_core)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                            <i class="fa-solid fa-lock mr-1.5 text-[10px]"></i> Módulo núcleo
+                                        </span>
+                                    @elseif (! $canToggle)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-slate-50 text-slate-500 border border-slate-200"
+                                              title="Deshabilite primero: {{ implode(', ', $blockingDependents) }}">
+                                            <i class="fa-solid fa-link mr-1.5 text-[10px]"></i> En uso por {{ count($blockingDependents) }} {{ count($blockingDependents) === 1 ? 'módulo' : 'módulos' }}
+                                        </span>
+                                    @else
+                                        <form method="POST" action="{{ route('settings.modules.toggle', $module) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                    class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $module->is_enabled ? 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100' : 'bg-emerald-600 text-white hover:bg-emerald-700' }}">
+                                                {{ $module->is_enabled ? 'Deshabilitar' : 'Habilitar módulo' }}
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

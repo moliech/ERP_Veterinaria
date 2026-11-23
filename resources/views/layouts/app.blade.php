@@ -232,16 +232,16 @@
                     </div>
                 @endif
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3 overflow-hidden">
+                <div class="flex items-center justify-between gap-2">
+                    <a href="{{ route('profile.edit') }}" title="Ver y editar Mi Perfil" class="flex items-center space-x-3 overflow-hidden group flex-1 rounded-lg p-1 -m-1 hover:bg-slate-800/70 transition">
                         <div class="w-9 h-9 text-white rounded-lg flex items-center justify-center font-bold text-xs shrink-0" style="background-color: {{ $accentHex }};">
                             {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                         </div>
                         <div class="truncate">
-                            <span class="block text-xs font-bold text-white truncate">{{ Auth::user()->name }}</span>
-                            <span class="block text-[10px] text-slate-400 truncate">{{ Auth::user()->email }}</span>
+                            <span class="block text-xs font-bold text-white truncate group-hover:text-emerald-300 transition">{{ Auth::user()->name }}</span>
+                            <span class="block text-[10px] text-slate-400 truncate">Mi perfil · {{ Auth::user()->email }}</span>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Botón de Salir -->
                     <form method="POST" action="{{ route('logout') }}">

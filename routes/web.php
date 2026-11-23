@@ -68,24 +68,29 @@ Route::middleware('auth')->group(function () {
 
     // Ventas (protegido por módulo activo)
     Route::middleware('module:sales')->group(function () {
-        Route::get('sales/{sale}/pdf', [SaleController::class, 'pdf'])->name('sales.pdf');
-        Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+        Route::get('sales/{sale}/pdf', [SaleController::class, 'pdf'])
+            ->withTrashed()->name('sales.pdf');
+        Route::get('sales/{sale}', [SaleController::class, 'show'])
+            ->withTrashed()->name('sales.show');
+        Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'destroy']);
     });
 
-    // Proveedores (Clase 10 - protegido por módulo activo)
+    // Proveedores (protegido por módulo activo)
     Route::middleware('module:providers')->group(function () {
         Route::patch('providers/{provider}/restore', [ProviderController::class, 'restore'])
             ->withTrashed()->name('providers.restore');
         Route::resource('providers', ProviderController::class)->except('show');
     });
 
-    // Compras (Clase 10 - protegido por módulo activo)
+    // Compras (protegido por módulo activo)
     Route::middleware('module:purchases')->group(function () {
         Route::patch('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])
             ->name('purchases.receive');
         Route::get('purchases/{purchase}/pdf', [PurchaseController::class, 'pdf'])
-            ->name('purchases.pdf');
-        Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+            ->withTrashed()->name('purchases.pdf');
+        Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])
+            ->withTrashed()->name('purchases.show');
+        Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'destroy']);
     });
 
     // Kardex y Ajustes de Inventario (Clase 12)

@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Sale;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -13,22 +14,21 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SalesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
-    public function collection()
+    public function collection(): Enumerable
     {
-        return Sale::with(['client', 'user'])->latest()->get();
+        return Sale::withTrashed()->with(['client', 'user'])->latest()->get();
     }
 
     public function headings(): array
     {
         return [
-            'Número de Venta',
-            'Fecha y Hora',
+            'Número de Factura',
+            'Fecha de Venta',
             'Cliente',
             'Vendedor / Usuario',
             'Subtotal',
-            'IVA (19%)',
+            'IVA',
             'Total Facturado',
-            'Método de Pago',
             'Estado',
         ];
     }
@@ -38,27 +38,30 @@ class SalesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithM
      */
     public function map($sale): array
     {
+        $clientName = $sale->client
+            ? trim($sale->client->first_name.' '.$sale->client->last_name)
+            : 'Cliente General / Mostrador';
+
         return [
-            $sale->sale_number,
-            $sale->created_at->format('Y-m-d H:i:s'),
-            $sale->client?->name ?? 'Cliente General / Mostrador',
+            $sale->invoice_number,
+            $sale->sale_date ? $sale->sale_date->format('Y-m-d') : $sale->created_at->format('Y-m-d'),
+            $clientName,
             $sale->user?->name ?? 'Sistema',
-            number_format($sale->subtotal, 2, '.', ''),
-            number_format($sale->tax, 2, '.', ''),
-            number_format($sale->total, 2, '.', ''),
-            ucfirst($sale->payment_method ?? 'efectivo'),
+            number_format((float) $sale->subtotal, 2, '.', ''),
+            number_format((float) $sale->tax, 2, '.', ''),
+            number_format((float) $sale->total, 2, '.', ''),
             ucfirst($sale->status),
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): ?array
     {
         return [
             1 => [
                 'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FF0369A1'], // Sky 700
+                    'startColor' => ['argb' => 'FF0369A1'],
                 ],
             ],
         ];

@@ -78,7 +78,9 @@
                         </button>
 
                         @if (request()->hasAny(['search', 'from', 'to']))
-                            <a href="{{ route('sales.index') }}" class="text-slate-500 hover:text-slate-800 text-sm font-medium">Limpiar</a>
+                            <a href="{{ route('sales.index') }}" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-sm font-semibold transition">
+                                Limpiar
+                            </a>
                         @endif
                     </form>
                 </div>

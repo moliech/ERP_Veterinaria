@@ -32,7 +32,50 @@
     <span>Usuario activo (puede iniciar sesión)</span>
 </label>
 
-<h3 class="font-semibold text-gray-800 pt-4 border-t">2. Roles</h3>
+<h3 class="font-semibold text-gray-800 pt-4 border-t">2. Roles y Clonación de Privilegios</h3>
+
+@if (! empty($templateUsers))
+    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <span class="block text-xs font-bold text-slate-800">Copiar roles y permisos de un usuario existente</span>
+            <span class="block text-xs text-slate-500">Seleccione un usuario de referencia para replicar su perfil en un clic.</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <select id="clone-user-select" class="border-slate-300 rounded-lg text-xs py-2 px-3">
+                <option value="">— Seleccionar usuario modelo —</option>
+                @foreach ($templateUsers as $tpl)
+                    <option value="{{ $tpl['id'] }}">{{ $tpl['name'] }} ({{ $tpl['email'] }})</option>
+                @endforeach
+            </select>
+            <button type="button" id="clone-user-btn"
+                    class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold transition whitespace-nowrap">
+                <i class="fa-solid fa-copy mr-1"></i> Aplicar perfil
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const templates = @json($templateUsers);
+            const select = document.getElementById('clone-user-select');
+            const btn = document.getElementById('clone-user-btn');
+            if (!btn || !select) return;
+
+            btn.addEventListener('click', () => {
+                const tpl = templates.find(u => String(u.id) === String(select.value));
+                if (!tpl) return;
+
+                document.querySelectorAll('input[name="roles[]"]').forEach(cb => {
+                    cb.checked = tpl.roles.includes(cb.value);
+                });
+                document.querySelectorAll('input[name="permissions[]"]').forEach(cb => {
+                    cb.checked = tpl.permissions.includes(cb.value);
+                });
+            });
+        });
+    </script>
+@endif
+
 <p class="text-sm text-gray-600">
     Puede asignar varios roles. Si el usuario tiene más de uno, al iniciar sesión elegirá con cuál trabajar.
 </p>

@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Product;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -13,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ProductsExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
-    public function collection()
+    public function collection(): Enumerable
     {
         return Product::with('category')->orderBy('name')->get();
     }
@@ -26,7 +27,8 @@ class ProductsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             'Nombre del Producto',
             'Categoría',
             'Precio Costo',
-            'Precio Venta (con IVA 19%)',
+            'Precio Base Venta',
+            'Tarifa IVA (%)',
             'Stock Actual',
             'Stock Mínimo',
             'Estado',
@@ -45,24 +47,25 @@ class ProductsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             $product->barcode ?? 'N/A',
             $product->name,
             $product->category?->name ?? 'Sin categoría',
-            number_format($product->cost_price, 2, '.', ''),
-            number_format($product->sale_price, 2, '.', ''),
-            $product->current_stock,
-            $product->min_stock ?? 0,
-            $product->is_active ? 'Activo' : 'Inactivo',
-            $product->lot_number ?? 'N/A',
+            number_format((float) $product->cost_price, 2, '.', ''),
+            number_format((float) $product->sale_price, 2, '.', ''),
+            number_format((float) ($product->tax_rate ?? 19), 0, '.', '').'%',
+            (int) $product->current_stock,
+            (int) ($product->minimum_stock ?? 0),
+            $product->active ? 'Activo' : 'Inactivo',
+            $product->batch_code ?? 'N/A',
             $product->expiration_date ? $product->expiration_date->format('Y-m-d') : 'N/A',
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): ?array
     {
         return [
             1 => [
                 'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FF0F766E'], // Teal corporativo VetPets
+                    'startColor' => ['argb' => 'FF0F766E'],
                 ],
             ],
         ];

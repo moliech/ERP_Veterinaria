@@ -80,14 +80,14 @@
                                class="w-full border-gray-300 rounded-lg">
                     </div>
 
-                    <div class="flex justify-between">
+                    <div class="flex justify-between items-center pt-2">
                         <a href="{{ route('clients.index') }}"
-                           class="px-4 py-2 text-gray-700">
+                           class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm transition shadow-sm">
                             Cancelar
                         </a>
 
                         <button type="submit"
-                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm px-5 py-2 rounded-lg transition shadow-sm">
                             Guardar cliente
                         </button>
                     </div>

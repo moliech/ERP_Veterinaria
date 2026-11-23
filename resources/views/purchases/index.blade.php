@@ -80,14 +80,14 @@
                 @endif
 
                 <!-- Filtros -->
-                <form method="GET" action="{{ route('purchases.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div class="md:col-span-2">
+                <form method="GET" action="{{ route('purchases.index') }}" class="flex flex-wrap items-center gap-3">
+                    <div class="flex-1 min-w-[200px]">
                         <input type="text" name="search" value="{{ request('search') }}"
                                placeholder="Buscar por N° OC o Proveedor..."
                                class="w-full px-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
                     </div>
                     <div>
-                        <select name="status" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        <select name="status" class="px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
                             <option value="">Todos los Estados</option>
                             <option value="pendiente" {{ request('status') === 'pendiente' ? 'selected' : '' }}>Pendiente</option>
                             <option value="parcial" {{ request('status') === 'parcial' ? 'selected' : '' }}>Recepción Parcial</option>
@@ -95,12 +95,22 @@
                             <option value="anulada" {{ request('status') === 'anulada' ? 'selected' : '' }}>Anulada</option>
                         </select>
                     </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+                    <div class="flex items-center space-x-2 text-xs text-slate-500">
+                        <span>Desde:</span>
+                        <input type="date" name="from" value="{{ request('from') }}"
+                               class="py-2 px-3 text-sm border border-slate-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-500">
+                        <span>Hasta:</span>
+                        <input type="date" name="to" value="{{ request('to') }}"
+                               class="py-2 px-3 text-sm border border-slate-300 rounded-xl focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
                             Filtrar
                         </button>
                         @if(request()->anyFilled(['search', 'status', 'from', 'to']))
-                            <a href="{{ route('purchases.index') }}" class="px-3 py-2 border border-slate-300 rounded-xl text-xs text-slate-600 hover:bg-slate-100 flex items-center justify-center">
+                            <a href="{{ route('purchases.index') }}" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-sm font-semibold transition">
                                 Limpiar
                             </a>
                         @endif

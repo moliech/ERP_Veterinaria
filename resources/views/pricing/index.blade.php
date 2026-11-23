@@ -148,16 +148,11 @@
                                                 <span class="font-mono">{{ $product->barcode ?? 'S/C' }}</span>
                                                 <span>·</span>
                                                 <span class="text-indigo-600 font-semibold">{{ $product->category->name ?? 'Sin Categoría' }}</span>
-                                                @if ($product->batch_code)
-                                                    <span>·</span>
-                                                    <span class="font-mono text-slate-600">Lote: {{ $product->batch_code }}</span>
-                                                @endif
                                             </div>
                                         </td>
 
-                                        <td class="px-4 py-3 text-right font-mono text-slate-600">
+                                        <td class="px-4 py-3 text-right font-mono text-slate-700 font-semibold">
                                             ${{ number_format((float) $product->cost_price, 0, ',', '.') }}
-                                            <div class="text-[10px] text-slate-400">Desde Inventario</div>
                                         </td>
 
                                         <td class="px-4 py-3 text-right">

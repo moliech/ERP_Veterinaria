@@ -99,6 +99,20 @@ class UserController extends Controller implements HasMiddleware
             }
         }
 
+        $templateUsers = User::with(['roles', 'permissions'])
+            ->when($user->exists, fn ($q) => $q->whereKeyNot($user->id))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (User $u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'email' => $u->email,
+                'roles' => $u->roles->pluck('name')->values()->all(),
+                'permissions' => $u->permissions->pluck('name')->values()->all(),
+            ])
+            ->values()
+            ->all();
+
         return [
             'user' => $user,
             'roles' => $roles,
@@ -107,6 +121,7 @@ class UserController extends Controller implements HasMiddleware
             'userRoles' => old('roles', $user->exists ? $user->getRoleNames()->all() : []),
             'directPermissions' => old('permissions', $user->exists ? $user->getDirectPermissions()->pluck('name')->all() : []),
             'inherited' => $inherited,
+            'templateUsers' => $templateUsers,
         ];
     }
 }

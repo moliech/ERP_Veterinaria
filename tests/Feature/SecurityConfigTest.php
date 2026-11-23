@@ -244,7 +244,7 @@ class SecurityConfigTest extends TestCase
             ->get(route('pricing.index'))
             ->assertOk()
             ->assertSee('Concentrado Premium 10kg')
-            ->assertSee('LOT-VIG-01');
+            ->assertSee('50.000');
 
         $this->actingAs($admin)
             ->put(route('pricing.update', $food), [

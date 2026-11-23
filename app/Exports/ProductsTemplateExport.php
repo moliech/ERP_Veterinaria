@@ -15,15 +15,26 @@ class ProductsTemplateExport implements FromArray, ShouldAutoSize, WithHeadings,
     {
         return [
             [
-                '7701234567890',
-                'Royal Canin Maxi Adult 15kg',
-                'Alimento Perros',
-                '180000',
-                '245000',
+                '7709991000011',
+                'Snack Dental Pedigree Dentastix x7',
+                'Snacks y Premios',
+                '14500',
+                '22000',
+                '15',
+                '5',
+                'LOT-2026-SN01',
+                '2027-10-30',
+            ],
+            [
+                '7709991000028',
+                'Collar Reflectivo Ajustable Talla M',
+                'Accesorios y Paseo',
+                '18000',
+                '32000',
                 '10',
                 '3',
-                'L-2026-01',
-                '2027-12-31',
+                '',
+                '',
             ],
         ];
     }
@@ -43,14 +54,14 @@ class ProductsTemplateExport implements FromArray, ShouldAutoSize, WithHeadings,
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): ?array
     {
         return [
             1 => [
                 'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FF1E293B'], // Slate 800
+                    'startColor' => ['argb' => 'FF1E293B'],
                 ],
             ],
         ];

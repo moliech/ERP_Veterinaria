@@ -51,6 +51,21 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            @if ($purchase->status === 'anulada' || $purchase->trashed())
+                <div class="p-4 bg-rose-50 border-l-4 border-rose-500 text-rose-800 rounded-xl shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-ban text-rose-600 text-xl"></i>
+                        <div>
+                            <strong class="block font-bold text-sm">Orden de Compra Anulada</strong>
+                            <span class="text-xs text-rose-700">Esta orden fue anulada sin recepciones pendientes y se conserva únicamente para fines de consulta y auditoría histórica.</span>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg border-2 border-rose-500 text-rose-600 font-black text-xs uppercase tracking-widest">
+                        ANULADA
+                    </span>
+                </div>
+            @endif
+
             @if (session('success'))
                 <div class="p-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 rounded-xl shadow-sm flex items-center space-x-2">
                     <i class="fa-solid fa-circle-check text-emerald-600"></i>

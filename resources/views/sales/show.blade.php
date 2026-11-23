@@ -34,7 +34,22 @@
         <div class="max-w-4xl mx-auto space-y-6">
 
             <!-- Card de Factura -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
+            <div class="relative bg-white rounded-2xl shadow-sm border {{ ($sale->status === 'anulada' || $sale->trashed()) ? 'border-rose-300' : 'border-slate-200' }} p-8 space-y-6 overflow-hidden">
+
+                @if ($sale->status === 'anulada' || $sale->trashed())
+                    <div class="pointer-events-none select-none absolute inset-0 flex items-center justify-center z-10">
+                        <div class="-rotate-12 border-4 border-rose-500/40 text-rose-600/30 font-black text-6xl md:text-7xl tracking-widest uppercase px-8 py-3 rounded-2xl">
+                            ANULADA
+                        </div>
+                    </div>
+                    <div class="relative z-20 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl flex items-center space-x-3 text-sm">
+                        <i class="fa-solid fa-ban text-rose-600 text-lg"></i>
+                        <div>
+                            <strong class="block font-bold">Factura Anulada</strong>
+                            <span class="text-xs text-rose-700">Este comprobante fue anulado y las unidades vendidas fueron reintegradas al inventario mediante el Kardex.</span>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Encabezado de Factura (Identidad Corporativa Dinámica) -->
                 <div class="flex flex-col md:flex-row justify-between border-b border-slate-100 pb-6 gap-6">
