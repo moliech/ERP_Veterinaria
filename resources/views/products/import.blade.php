@@ -21,7 +21,12 @@
                 </div>
                 <div class="max-h-48 overflow-y-auto text-xs text-red-700 space-y-1">
                     @foreach (session('failures') as $failure)
-                        <p><strong>Fila {{ $failure->row() }}:</strong> Atributo <code>{{ $failure->attribute() }}</code> - {{ implode(', ', $failure->errors()) }}</p>
+                        @php
+                            $row = is_array($failure) ? ($failure['row'] ?? '?') : $failure->row();
+                            $attr = is_array($failure) ? ($failure['attribute'] ?? '') : $failure->attribute();
+                            $errs = is_array($failure) ? ($failure['errors'] ?? []) : $failure->errors();
+                        @endphp
+                        <p><strong>Fila {{ $row }}:</strong> Campo <code>{{ $attr }}</code> — {{ implode(', ', (array) $errs) }}</p>
                     @endforeach
                 </div>
             </div>

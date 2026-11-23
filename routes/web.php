@@ -68,11 +68,11 @@ Route::middleware('auth')->group(function () {
 
     // Ventas (protegido por módulo activo)
     Route::middleware('module:sales')->group(function () {
-        Route::get('sales/{sale}/pdf', [SaleController::class, 'pdf'])
-            ->withTrashed()->name('sales.pdf');
-        Route::get('sales/{sale}', [SaleController::class, 'show'])
-            ->withTrashed()->name('sales.show');
         Route::resource('sales', SaleController::class)->only(['index', 'create', 'store', 'destroy']);
+        Route::get('sales/{sale}/pdf', [SaleController::class, 'pdf'])
+            ->whereNumber('sale')->withTrashed()->name('sales.pdf');
+        Route::get('sales/{sale}', [SaleController::class, 'show'])
+            ->whereNumber('sale')->withTrashed()->name('sales.show');
     });
 
     // Proveedores (protegido por módulo activo)
@@ -84,13 +84,13 @@ Route::middleware('auth')->group(function () {
 
     // Compras (protegido por módulo activo)
     Route::middleware('module:purchases')->group(function () {
-        Route::patch('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])
-            ->name('purchases.receive');
-        Route::get('purchases/{purchase}/pdf', [PurchaseController::class, 'pdf'])
-            ->withTrashed()->name('purchases.pdf');
-        Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])
-            ->withTrashed()->name('purchases.show');
         Route::resource('purchases', PurchaseController::class)->only(['index', 'create', 'store', 'destroy']);
+        Route::patch('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])
+            ->whereNumber('purchase')->name('purchases.receive');
+        Route::get('purchases/{purchase}/pdf', [PurchaseController::class, 'pdf'])
+            ->whereNumber('purchase')->withTrashed()->name('purchases.pdf');
+        Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])
+            ->whereNumber('purchase')->withTrashed()->name('purchases.show');
     });
 
     // Kardex y Ajustes de Inventario (Clase 12)

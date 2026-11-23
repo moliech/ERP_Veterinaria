@@ -33,11 +33,17 @@ class ExcelController extends Controller
         $import->import($request->file('file'));
 
         if ($import->failures()->isNotEmpty()) {
-            return back()->with('failures', $import->failures());
+            $failures = collect($import->failures())->map(fn ($failure) => [
+                'row' => is_array($failure) ? ($failure['row'] ?? '?') : $failure->row(),
+                'attribute' => is_array($failure) ? ($failure['attribute'] ?? '') : $failure->attribute(),
+                'errors' => is_array($failure) ? ($failure['errors'] ?? []) : $failure->errors(),
+            ])->all();
+
+            return back()->with('failures', $failures);
         }
 
         return redirect()->route('products.index')
-            ->with('status', 'Catálogo de productos importado exitosamente con asentamiento en Kardex.');
+            ->with('success', 'Catálogo de productos importado exitosamente con asentamiento en Kardex.');
     }
 
     public function exportSales()

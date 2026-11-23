@@ -52,7 +52,7 @@
                                 <i class="fa-solid fa-fingerprint text-blue-600 text-xl"></i>
                             </div>
                             <p class="text-3xl font-bold mt-2 text-slate-800"><i class="fa-solid fa-shield-halved text-emerald-600 text-2xl"></i></p>
-                            <p class="text-sm text-gray-600 mt-1">Trazabilidad forense y visual diffs de cambios.</p>
+                            <p class="text-sm text-gray-600 mt-1">Historial detallado de cambios en módulos y eventos de seguridad.</p>
                         </a>
                     @endcan
                 </div>

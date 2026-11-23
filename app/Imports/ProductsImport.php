@@ -60,6 +60,17 @@ class ProductsImport implements SkipsOnFailure, ToModel, WithHeadingRow, WithVal
         return $product;
     }
 
+    public function prepareForValidation(array $data): array
+    {
+        foreach (['codigo_barras', 'nombre', 'categoria', 'lote'] as $field) {
+            if (isset($data[$field]) && $data[$field] !== '') {
+                $data[$field] = trim((string) $data[$field]);
+            }
+        }
+
+        return $data;
+    }
+
     public function rules(): array
     {
         return [

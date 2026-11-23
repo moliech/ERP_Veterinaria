@@ -26,13 +26,13 @@ class InventoryController extends Controller implements HasMiddleware
     {
         $products = Product::withTrashed()->orderBy('name')->get(['id', 'name', 'current_stock', 'deleted_at']);
         $product = $request->filled('product') ? $products->firstWhere('id', (int) $request->input('product')) : null;
-        $movements = $product ? $this->movementsQuery($request, $product)->paginate(20)->withQueryString() : null;
+        $movements = $this->movementsQuery($request, $product)->paginate(20)->withQueryString();
 
         return view('inventory.kardex', [
             'products' => $products,
             'product' => $product,
             'movements' => $movements,
-            'totals' => $product ? $this->totals($request, $product) : null,
+            'totals' => $this->totals($request, $product),
             'concepts' => InventoryMovement::CONCEPTS,
         ]);
     }
@@ -72,24 +72,29 @@ class InventoryController extends Controller implements HasMiddleware
             ->with('success', "Ajuste registrado: {$movement->type} de {$movement->quantity} unidades. Nuevo stock: {$movement->balance}.");
     }
 
-    private function movementsQuery(Request $request, Product $product)
+    private function movementsQuery(Request $request, ?Product $product = null)
     {
-        return $product->movements()
-            ->with(['user:id,name', 'reference'])
+        $query = $product
+            ? $product->movements()->with(['user:id,name', 'reference'])
+            : InventoryMovement::query()->with(['product' => fn ($q) => $q->withTrashed()->select('id', 'name'), 'user:id,name', 'reference']);
+
+        return $query
             ->when($request->filled('from'), fn ($q) => $q->whereDate('created_at', '>=', $request->input('from')))
             ->when($request->filled('to'), fn ($q) => $q->whereDate('created_at', '<=', $request->input('to')))
             ->when($request->filled('concept'), fn ($q) => $q->where('concept', $request->input('concept')))
-            ->orderBy('id');
+            ->when($product, fn ($q) => $q->orderBy('id'), fn ($q) => $q->latest('created_at')->latest('id'));
     }
 
-    private function totals(Request $request, Product $product): array
+    private function totals(Request $request, ?Product $product = null): array
     {
         $query = $this->movementsQuery($request, $product)->reorder();
 
         return [
             'entradas' => (int) (clone $query)->where('type', 'entrada')->sum('quantity'),
             'salidas' => (int) (clone $query)->where('type', 'salida')->sum('quantity'),
-            'cuadra' => (int) ($product->movements()->latest('id')->value('balance') ?? 0) === (int) $product->stock,
+            'cuadra' => $product
+                ? (int) ($product->movements()->latest('id')->value('balance') ?? 0) === (int) $product->stock
+                : true,
         ];
     }
 }
