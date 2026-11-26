@@ -18,7 +18,6 @@
 * **Fecha de Sustentación Presencial:** 26 de noviembre de 2026 (8:15 p. m.)
 * **Enlaces de Entrega y Verificación:**
   * **Repositorio en GitHub:** [https://github.com/moliech/ERP_Veterinaria](https://github.com/moliech/ERP_Veterinaria) (Etiqueta: `final`)
-  * **Video de Respaldo:** [https://drive.google.com/drive/folders/154DKFAKOyDlauuwDyoacq1mFkrTdBTYA?usp=sharing](https://drive.google.com/drive/folders/154DKFAKOyDlauuwDyoacq1mFkrTdBTYA?usp=sharing)
 
 ---
 
@@ -400,11 +399,13 @@ La puesta en marcha de **VetPets ERP** resuelve de forma verificable las cinco p
 **Figura 6**  
 *Evidencias de Abastecimiento y Gestión Comercial: Recepción Parcial en MySQL y Tarifas con IVA Diferencial*
 
-| 6A. Recepción Parcial de Compra y Stock en MySQL | 6B. Módulo de Tarifas, Margen e IVA Diferencial (`/tarifas`) |
+| 6A.1. Verificación del Incremento de Stock en MySQL | 6A.2. Recepción Parcial de Orden de Compra (`OC-00004`) |
 | :---: | :---: |
-| ![Recepción Parcial](figura1.png) | ![Tarifas e IVA](figura_tarifas.png) |
+| ![Verificación MySQL](figura1_a1_mysql.png) | ![Recepción Parcial](figura1_a2_orden.png) |
+| **6B. Módulo de Tarifas, Margen e IVA Diferencial (`/tarifas`)** | |
+| ![Tarifas e IVA](figura_tarifas.png) | |
 
-*Nota.* A la izquierda (6A), orden en estado `parcial` (6 de 10 unidades) verificada en MySQL; a la derecha (6B), cálculo automático de margen sobre el último costo y selector de IVA (0 %, 5 %, 19 %). Fuente: Elaboración propia.
+*Nota.* En 6A.1 y 6A.2, orden en estado `parcial` (6 de 10 unidades recibidas) verificada en la tabla `products` de MySQL; en 6B, cálculo automático de margen sobre el último costo y selector de IVA (0 %, 5 %, 19 %). Fuente: Elaboración propia.
 
 **Figura 7**  
 *Validaciones de Reglas de Negocio: Control de Stock, Factura Anulada y Segregación por Rol Activo*
@@ -534,7 +535,7 @@ A continuación se incorporan los cinco anexos técnicos y operativos exigidos e
 **Figura 10**  
 *Evidencias de Facturación POS: Registro con IVA Diferencial y Comprobante Interno en PDF*
 
-| 10A. Venta POS con IVA Diferencial y Descuento en MySQL | 10B. Comprobante Interno PDF (Marca Blanca) |
+| 10A. Venta POS con IVA Diferencial y Descuento en MySQL | 10B. Comprobante Interno PDF con Identidad Corporativa |
 | :---: | :---: |
 | ![Venta POS](figura3.png) | ![Factura PDF](figura5.png) |
 

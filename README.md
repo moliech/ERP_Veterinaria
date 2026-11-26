@@ -15,7 +15,6 @@
 * **Docente:** Ing. Jhon James Cano Sánchez
 * **Entrega Final:** 25 de noviembre de 2026 (Etiqueta Git: **`final`**)
 * **Sustentación Presencial:** 26 de noviembre de 2026 (8:15 p. m.)
-* **Video de Respaldo:** [Ver Video en Google Drive](https://drive.google.com/drive/folders/154DKFAKOyDlauuwDyoacq1mFkrTdBTYA?usp=sharing)
 * **Informe Final Oficial (PDF — Normas APA 7):** [Informe_Final_ERP_VetPets_Molina_Lozano.pdf](docs/final/Informe_Final_ERP_VetPets_Molina_Lozano.pdf)
 * **Colección Postman API REST v1:** [ERP_API.postman_collection.json](ERP_API.postman_collection.json)
 
